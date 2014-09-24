@@ -1,0 +1,6 @@
+mvn archetype:generate -DgroupId=com.origin.aiur.app -DartifactId=aiur-webapp -DarchetypeArtifactId=maven-archetype-webapp
+
+mvn clean compile
+
+mvn eclipse:eclipse
+

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+	<!--These settings control SqlMap configuration details, primarily to do with transaction
+		management. They are all optional (see the Developer Guide for more).-->
+  <settings 
+    lazyLoadingEnabled="false" 
+    cacheModelsEnabled="true" 
+    enhancementEnabled="true"
+    maxRequests="256"
+    maxSessions="128"
+    maxTransactions="32"/>
+    
+	<!-- Type aliases allow you to use a shorter name for long fully qualified class names. -->
+	
+	<!-- Configure a datasource to use with this SQL Map using SimpleDataSource.
+		Notice the use of the properties from the above resource-->
+	<transactionManager type="JDBC" commitRequired="false">
+	  <dataSource type="SIMPLE">
+	    <property name="JDBC.Driver" value="com.mysql.jdbc.Driver"/>
+	    <property name="JDBC.ConnectionURL" value="jdbc:mysql://localhost:3306/aiurdb?useUnicode=true&amp;characterEncoding=utf8"/>
+	    <property name="JDBC.Username" value="airuadmin"/>
+	    <property name="JDBC.Password" value="adsk45td"/>
+	    <property name="Pool.PingEnabled" value="true"/>
+	    <property name="Pool.PingQuery" value="select 1"/>
+	    <property name="Pool.PingConnectionsOlderThan" value="0"/>
+	    <property name="Pool.PingConnectionsNotUsedFor" value="3600000"/>
+	  </dataSource>
+	</transactionManager>
+
+  <!-- List the SQL Map XML files. They can be loaded from the
+       classpath, as they are here (com.domain.data...) -->
+  <sqlMap resource="orm/MysqlQuerySql.xml"/>
+</sqlMapConfig>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="WbQuerySql">
+	<typeAlias alias="CrossItem" type="com.telenav.weibo.bean.CrossItem"/>
+	<typeAlias alias="TrafficOrderItem" type="com.telenav.weibo.bean.TrafficOrderItem"/>
+	<typeAlias alias="TrafficUserItem" type="com.telenav.weibo.bean.TrafficUserItem"/>
+
+	<select id="getAccessToken" resultClass="java.lang.String">
+		<![CDATA[
+			SELECT access_token
+			  FROM tn_weibo_token_list
+			 WHERE date_add(now(), interval 15 MINUTE) <= token_deadline 
+			   AND weibo_uid = #value#
+		]]>
+	</select>
+	<insert id="insertAccessToken" parameterClass="java.util.Map">
+        <![CDATA[
+			insert into tn_weibo_token_list (
+				weibo_uid,
+				access_token,
+				create_time,
+				token_deadline
+			) values (
+				#wb_uid:VARCHAR#,
+				#access_token:VARCHAR#,
+				now(),
+				date_add(now(), interval #exspire_second:DECIMAL# SECOND)
+			) ON DUPLICATE KEY 
+					UPDATE access_token = #access_token:VARCHAR#,
+					       create_time = VALUES(create_time),
+					       token_deadline = VALUES(token_deadline)
+        ]]>
+	</insert>
+	
+	<resultMap id="CrossItemResult" class="CrossItem">
+		<result property="crossName" column="cross_name"/>
+		<result property="lat" column="cross_lat"/>
+		<result property="lon" column="cross_lon"/>
+		<result property="minlat" column="min_lat" javaType="double" nullValue="0"/>
+		<result property="minlon" column="min_lon" javaType="double" nullValue="0"/>
+		<result property="maxlat" column="max_lat" javaType="double" nullValue="0"/>
+		<result property="maxlon" column="max_lon" javaType="double" nullValue="0"/>
+	</resultMap>
+
+	<select id="getCityCrossList" parameterClass="java.lang.String" resultMap="CrossItemResult">
+		<![CDATA[
+			SELECT cross_name,
+				   cross_lat,
+				   cross_lon,
+				   min_lat,
+				   min_lon,
+				   max_lat,
+				   max_lon
+			  FROM tn_weibo_cross_list
+			 WHERE city = #value#
+			 ORDER BY display_sort
+		]]>
+	</select>
+	
+	<select id="getActiveMailStatus" parameterClass="java.lang.String" resultClass="java.lang.String">
+		<![CDATA[
+			SELECT active_status
+			  FROM tn_weibo_active_mail
+			 WHERE mail_uid = #value#
+		]]>
+	</select>
+	
+	<insert id="insertActiveMail" parameterClass="java.util.Map">
+        <![CDATA[
+			insert into tn_weibo_active_mail (
+				mail_uid,
+				mail_text,
+				active_status,
+				create_time,
+				update_time
+			) values (
+				#mail_code:VARCHAR#,
+				#mail_msg:VARCHAR#,
+				'SENDED',
+				now(),
+				now()
+			) ON DUPLICATE KEY 
+					UPDATE active_status = 'SENDED',
+					       mail_text = VALUES(mail_text),
+						   create_time = NOW(),
+						   update_time = NOW()
+        ]]>
+	</insert>
+
+	<update id="updateActiveMail">
+		<![CDATA[
+			UPDATE tn_weibo_active_mail
+			   SET active_status = 'ACTIVED',
+			       update_time = NOW()
+			 WHERE mail_uid = #value#
+		]]>
+	</update>
+
+	<select id="getUserTimelineId" parameterClass="java.lang.String" resultClass="java.lang.Long">
+		<![CDATA[
+			SELECT IFNULL(timeline_id, 0 )
+			  FROM tn_weibo_token_list
+			 WHERE weibo_uid = #value#
+			 LIMIT 1
+		]]>
+	</select>
+	<update id="updateUserTimelineId" parameterClass="java.util.Map">
+		<![CDATA[
+			UPDATE tn_weibo_token_list
+			   SET timeline_id = #timeline_id#
+			 WHERE weibo_uid = #user_uuid#
+		]]>
+	</update>
+	<select id="getTrafficRoadId" parameterClass="java.util.Map" resultClass="java.lang.Long">
+		<![CDATA[
+			SELECT road_id
+			  FROM tn_weibo_road_list
+			 WHERE traffic_city = #traffic_city#
+			   AND traffic_road = #traffic_road#
+		]]>
+	</select>
+	<insert id="insertTrafficRoad">
+		<![CDATA[
+			INSERT INTO tn_weibo_road_list(
+				traffic_city,
+				traffic_road,
+				create_time
+			)VALUES(
+				#traffic_city#,
+				#traffic_road#,
+				now()
+			)
+		]]>
+		<selectKey resultClass="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<insert id="insertUserTrafficRoad">
+	<![CDATA[
+			INSERT INTO tn_weibo_user_traffic(
+				user_name,
+				user_id,
+				road_id,
+				create_time,
+				update_time
+			)VALUES(
+				#user_name#,
+				#user_id#,
+				#road_id#,
+				now(),
+				now()
+			) ON DUPLICATE KEY 
+					UPDATE update_time = NOW()
+		]]>
+	</insert>
+	<resultMap id="OrderTrafficResult" class="TrafficOrderItem">
+		<result property="trafficCity" column="traffic_city"/>
+		<result property="trafficRoad" column="traffic_road"/>
+		<result property="lat" column="road_lat" nullValue="0"/>
+		<result property="lon" column="road_lon" nullValue="0"/>
+		<result property="orderUserList" column="road_id" select="getOrderedUserList"/>
+	</resultMap>
+	<select id="getDailyOrderTraffic" resultMap="OrderTrafficResult">
+		<![CDATA[
+			SELECT road_id,
+				   traffic_city,
+				   traffic_road,
+				   road_lat,
+				   road_lon
+			  FROM tn_weibo_road_list
+			 ORDER BY create_time
+		]]>
+	</select>
+	<resultMap id="OrderTrafficUser" class="TrafficUserItem">
+		<result property="userName" column="user_name"/>
+		<result property="userId" column="user_id"/>
+	</resultMap>
+	<select id="getOrderedUserList" parameterClass="long" resultMap="OrderTrafficUser">
+		<![CDATA[
+			SELECT user_name,
+				   user_id
+			  FROM tn_weibo_user_traffic
+			 WHERE road_id = #value#
+			 ORDER BY create_time
+		]]>
+	</select>
+</sqlMap>
