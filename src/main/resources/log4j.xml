@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} [%-5p] %t - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="ActionFile" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="aiur-log.log" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{MM-dd HH:mm:ss} [%-5p] %t - %m%n" />
+		</layout>
+	</appender>
+	
+	<logger name="ActionLogger" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="ActionFile" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	
+	<root>
+		<level value="info" />
+	</root>
+
+</log4j:configuration>
