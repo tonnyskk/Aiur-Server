@@ -10,6 +10,25 @@ import com.origin.aiur.pojo.VoUser;
 
 public class DbService {
 
+    public static VoUser checkUserAccount(String loginName, String pwd) throws Exception {
+        VoUser userInfo = null;
+        try {
+            Map<String, String> param = new HashMap<String, String>();
+            param.put("login_name", loginName);
+            param.put("pwd_val",  pwd);
+            userInfo = (VoUser) DbOrm.getORMClient().queryForObject("checkUserAccount", param);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return userInfo;
+    }
+
+    
+    
     // **************************************************************************
     /**
      * @Title: getCrossList

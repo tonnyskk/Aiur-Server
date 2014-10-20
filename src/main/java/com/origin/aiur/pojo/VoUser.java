@@ -1,45 +1,53 @@
 package com.origin.aiur.pojo;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class VoUser {
-    private int id;
-    private String name;
-    private String dept;
-
+    private int userID;
+    private String loginName;
+    private String nickName;
+    private List<VoGroup> userGroupList;
+    
     public VoUser() {
         
     }
 
-    public VoUser(int id, String name, String dept) {
-        this.id = id;
-        this.name = name;
-        this.dept = dept;
+    public int getUserID() {
+        return userID;
     }
 
-    public int getId() {
-        return id;
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getLoginName() {
+        return loginName;
     }
 
-    public String getName() {
-        return name;
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getNickName() {
+        return nickName;
     }
 
-    public String getDept() {
-        return dept;
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
-    public void setDept(String dept) {
-        this.dept = dept;
+    public List<VoGroup> getUserGroupList() {
+        return userGroupList;
     }
+
+    public void setUserGroupList(List<VoGroup> userGroupList) {
+        this.userGroupList = userGroupList;
+    }
+
+    
+    
 
 }

@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class VoReponse {
     private int statusCode;
     private String statusMessage;
+    private VoUser voUser;
 
     public VoReponse() {
     }
@@ -22,4 +23,13 @@ public class VoReponse {
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
+
+    public VoUser getVoUser() {
+        return voUser;
+    }
+
+    public void setVoUser(VoUser voUser) {
+        this.voUser = voUser;
+    }
+    
 }

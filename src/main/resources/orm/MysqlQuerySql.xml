@@ -2,6 +2,48 @@
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 
 <sqlMap namespace="WbQuerySql">
+	<typeAlias alias="UserItem" type="com.origin.aiur.pojo.VoUser"/>
+	<typeAlias alias="GroupItem" type="com.origin.aiur.pojo.VoGroup"/>
+	
+	<resultMap id="UserResult" class="UserItem">
+		<result property="userID" column="user_id" javaType="long"/>
+		<result property="loginName" column="login_name"/>
+		<result property="nickName" column="nick_name"/>
+		<result property="userGroupList" column="user_id" select="queryUserGroupList"/>
+	</resultMap>
+	
+	<resultMap id="GroupResult" class="GroupItem">
+		<result property="groupId" column="group_id" javaType="long"/>
+		<result property="groupName" column="group_name"/>
+		<result property="ownerUserId" column="owner_id" javaType="long"/>
+	</resultMap>
+	
+	<select id="checkUserAccount" parameterClass="java.util.Map" resultMap="UserResult">
+		<![CDATA[
+			SELECT user_id,
+				   login_name,
+				   nick_name
+			  FROM aiur_users
+			 WHERE login_name = #login_name:VARCHAR#
+			   AND password = #pwd_val:VARCHAR#
+			 LIMIT 1
+		]]>
+	</select>
+	<select id="queryUserGroupList" parameterClass="long" resultMap="GroupResult">
+		<![CDATA[
+			SELECT g.group_id,
+			       g.group_name,
+			       g.owner_id
+			  FROM aiur_groups g,
+			       aiur_rel_user_group r
+			 WHERE g.group_id = r.group_id
+			   AND r.user_id = #value#
+			   AND r.status = 2
+			 ORDER BY g.create_time desc
+		]]>
+	</select>
+	
+	<!-- 
 	<typeAlias alias="CrossItem" type="com.telenav.weibo.bean.CrossItem"/>
 	<typeAlias alias="TrafficOrderItem" type="com.telenav.weibo.bean.TrafficOrderItem"/>
 	<typeAlias alias="TrafficUserItem" type="com.telenav.weibo.bean.TrafficUserItem"/>
@@ -185,4 +227,5 @@
 			 ORDER BY create_time
 		]]>
 	</select>
+	 -->
 </sqlMap>
