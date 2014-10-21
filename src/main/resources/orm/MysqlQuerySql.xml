@@ -29,6 +29,7 @@
 			 LIMIT 1
 		]]>
 	</select>
+
 	<select id="queryUserGroupList" parameterClass="long" resultMap="GroupResult">
 		<![CDATA[
 			SELECT g.group_id,
@@ -40,6 +41,46 @@
 			   AND r.user_id = #value#
 			   AND r.status = 2
 			 ORDER BY g.create_time desc
+		]]>
+	</select>
+	
+	<select id="isUserExists" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+		<![CDATA[
+			SELECT COUNT(1)
+			  FROM aiur_users
+			 WHERE login_name = #value#
+		]]>
+	</select>
+	
+	<insert id="insertNewUser">
+		<![CDATA[
+			INSERT INTO aiur_users(
+				login_name,
+				nick_name,
+				password,
+				create_time,
+				update_time
+			)VALUES(
+				#login_name:VARCHAR#,
+				#nick_name:VARCHAR#,
+				#pwd_val:VARCHAR#,
+				now(),
+				now()
+			)
+		]]>
+		<selectKey resultClass="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+
+	<select id="getUserAccount" parameterClass="java.lang.Long" resultMap="UserResult">
+		<![CDATA[
+			SELECT user_id,
+				   login_name,
+				   nick_name
+			  FROM aiur_users
+			 WHERE user_id = #value#
 		]]>
 	</select>
 	

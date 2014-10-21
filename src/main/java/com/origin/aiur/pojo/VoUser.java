@@ -6,20 +6,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class VoUser {
-    private int userID;
+    private long userID;
     private String loginName;
     private String nickName;
+    private String password;
+    private String deviceId;
     private List<VoGroup> userGroupList;
-    
+
     public VoUser() {
-        
+
     }
 
-    public int getUserID() {
+    public long getUserID() {
         return userID;
     }
 
-    public void setUserID(int userID) {
+    public void setUserID(long userID) {
         this.userID = userID;
     }
 
@@ -47,7 +49,24 @@ public class VoUser {
         this.userGroupList = userGroupList;
     }
 
-    
-    
+    public String getPassword() {
+        return password;
+    }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    @Override
+    public String toString() {
+        return "VoUser [userID=" + userID + ", loginName=" + loginName + ", nickName=" + nickName + ", deviceId=" + deviceId + "]";
+    }
 }
