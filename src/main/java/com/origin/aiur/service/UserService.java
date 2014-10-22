@@ -1,10 +1,14 @@
 package com.origin.aiur.service;
 
+import org.apache.commons.codec.binary.Base64;
+
 import com.origin.aiur.orm.DbService;
 import com.origin.aiur.pojo.VoReponse;
 import com.origin.aiur.pojo.VoUser;
+import com.origin.aiur.util.AiurLoader;
 import com.origin.aiur.util.AiurLog;
 import com.origin.aiur.util.AiurUtils;
+import com.origin.aiur.util.RSAUtils;
 import com.origin.aiur.util.RespStatus;
 import com.origin.aiur.util.TokenUtil;
 
@@ -29,7 +33,7 @@ public class UserService {
         }
 
         try {
-            VoUser user = DbService.checkUserAccount(voUser.getLoginName(), voUser.getPassword());
+            VoUser user = DbService.checkUserAccount(voUser.getLoginName(), AiurUtils.getDbPassword(voUser.getPassword()));
             if (user == null) {
                 response.setStatusCode(RespStatus.USER_NOT_FOUND);
             }else {
@@ -75,7 +79,7 @@ public class UserService {
                 response.setStatusCode(RespStatus.INVALID_USER_EXISTS);
                 response.setStatusMessage("INVALID_USER_EXISTS");
             } else {
-                long userId = DbService.regUserAccount(voUser.getLoginName(), voUser.getNickName(), voUser.getPassword());
+                long userId = DbService.regUserAccount(voUser.getLoginName(), voUser.getNickName(), AiurUtils.getDbPassword(voUser.getPassword()));
                 VoUser user = DbService.getUserAccount(userId);
                 if (user == null) {
                     response.setStatusCode(RespStatus.INVALID_CREATE_USER_FAILED);

@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class VoGroup {
     private long groupId;
     private String groupName;
-    private boolean ownerUserId;
+    private long ownerUserId;
 
     public VoGroup() {
 
@@ -28,11 +28,11 @@ public class VoGroup {
         this.groupName = groupName;
     }
 
-    public boolean isOwnerUserId() {
+    public long isOwnerUserId() {
         return ownerUserId;
     }
 
-    public void setOwnerUserId(boolean ownerUserId) {
+    public void setOwnerUserId(long ownerUserId) {
         this.ownerUserId = ownerUserId;
     }
 

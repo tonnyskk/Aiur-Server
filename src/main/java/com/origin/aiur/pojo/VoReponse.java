@@ -8,6 +8,7 @@ public class VoReponse {
     private String statusMessage;
     private Object data;
     private String token;
+    private String key;
 
     public VoReponse() {
     }
@@ -37,7 +38,17 @@ public class VoReponse {
         return token;
     }
 
-    public void setToken(String token) {
+	public void setToken(String token) {
         this.token = token;
     }
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+    
+    
 }
