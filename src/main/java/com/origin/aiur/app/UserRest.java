@@ -21,115 +21,115 @@ import com.origin.aiur.util.TokenUtil;
 
 @Path("/user")
 public class UserRest {
-	private static final String HEADER_DEVICE_ID = "device-id";
-	private static final String HEADER_USER_ID = "uId";
-	/**
-	 * When init startup app, sync resources to client. Like, RSA public key
-	 * URL: /aiur/rest/user/startup
-	 * Header: 
-	 * 		device-id=a0000001
-	 * 
-	 * @return voResponse
-	 */
-	@GET
-	@Path("startup")
-	@Produces(MediaType.APPLICATION_JSON)
-	public VoResponse startup(@Context HttpServletRequest request) {
-		
-		VoResponse response = new VoResponse();
-		response.setStatusCode(RespStatus.OK);
+    private static final String HEADER_DEVICE_ID = "device-id";
+    private static final String HEADER_USER_ID = "uId";
+    /**
+     * When init startup app, sync resources to client. Like, RSA public key
+     * URL: /aiur/rest/user/startup
+     * Header: 
+     *         device-id=a0000001
+     * 
+     * @return voResponse
+     */
+    @GET
+    @Path("startup")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse startup(@Context HttpServletRequest request) {
+        
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
 
-		try {
-			String deviceId = request.getHeader(HEADER_DEVICE_ID);
-			long userId = Long.parseLong(request.getHeader(HEADER_USER_ID));
-			response.setToken(TokenUtil.generateToken(userId, deviceId, 1));
-		} catch (IllegalValueException e) {
-			e.printStackTrace();
-		}
-		response.setKey(AiurLoader.getInstance().getPublicKey());
+        try {
+            String deviceId = request.getHeader(HEADER_DEVICE_ID);
+            long userId = Long.parseLong(request.getHeader(HEADER_USER_ID));
+            response.setToken(TokenUtil.generateToken(userId, deviceId, 1));
+        } catch (IllegalValueException e) {
+            e.printStackTrace();
+        }
+        response.setKey(AiurLoader.getInstance().getPublicKey());
 
-		return response;
-	}
+        return response;
+    }
 
-	/**
-	 * When client startup, check token status.
-	 * URL: /aiur/rest/user/status
-	 * Header: 
-	 * 		device-id=a0000001
-	 * 		token=sdfadsfa
-	 * 
-	 * @return voResponse
-	 */
-	@GET
-	@Path("status")
-	@Produces(MediaType.APPLICATION_JSON)
-	public VoResponse tokenValidate() {
-		VoResponse response = new VoResponse();
-		response.setStatusCode(RespStatus.OK);
-		return response;
-	}
+    /**
+     * When client startup, check token status.
+     * URL: /aiur/rest/user/status
+     * Header: 
+     *         device-id=a0000001
+     *         token=sdfadsfa
+     * 
+     * @return voResponse
+     */
+    @GET
+    @Path("status")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse tokenValidate() {
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
+        return response;
+    }
 
-	/**
-	 * User login
-	 * URL: /aiur/rest/user/login
-	 * Header: 
-	 * 		device-id=a0000001
-	 * 		Content-Type=application/json
-	 * Raw data:
-	 * 		{"loginName":"djia","password":"admin", "deviceId":"a00000001"}
-	 * @param voUser
-	 * @return
-	 */
-	@POST
-	@Path("login")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public VoResponse login(@Context HttpServletRequest request, VoUser voUser) {
-		AiurLog.logger().info("Receieving quest for login: " + voUser);
-		String deviceId = request.getHeader(HEADER_DEVICE_ID);
-		if (voUser == null) {
+    /**
+     * User login
+     * URL: /aiur/rest/user/login
+     * Header: 
+     *         device-id=a0000001
+     *         Content-Type=application/json
+     * Raw data:
+     *         {"loginName":"djia","password":"admin", "deviceId":"a00000001"}
+     * @param voUser
+     * @return
+     */
+    @POST
+    @Path("login")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public VoResponse login(@Context HttpServletRequest request, VoUser voUser) {
+        AiurLog.logger().info("Receieving quest for login: " + voUser);
+        String deviceId = request.getHeader(HEADER_DEVICE_ID);
+        if (voUser == null) {
             voUser = new VoUser();
         }
-		voUser.setDeviceId(deviceId);
-		return UserService.login(voUser);
-	}
+        voUser.setDeviceId(deviceId);
+        return UserService.login(voUser);
+    }
 
-	/**
-	 * Register user
-	 * URL: /aiur/rest/user/reg
-	 * Header: 
-	 * 		device-id=a0000001
-	 * 		Content-Type=application/json
-	 * Raw data:
-	 * 		{"loginName":"djia","password":"admin", "nickName":"Tonny", "deviceId":"a00000001"}
-	 * @param voUser
-	 * @return
-	 */
-	@POST
-	@Path("reg")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public VoResponse regist(@Context HttpServletRequest request, VoUser voUser) {
-		AiurLog.logger().info("Receieving quest for regist: " + voUser);
-		String deviceId = request.getHeader(HEADER_DEVICE_ID);
-		if (voUser == null) {
+    /**
+     * Register user
+     * URL: /aiur/rest/user/reg
+     * Header: 
+     *         device-id=a0000001
+     *         Content-Type=application/json
+     * Raw data:
+     *         {"loginName":"djia","password":"admin", "nickName":"Tonny", "deviceId":"a00000001"}
+     * @param voUser
+     * @return
+     */
+    @POST
+    @Path("reg")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public VoResponse regist(@Context HttpServletRequest request, VoUser voUser) {
+        AiurLog.logger().info("Receieving quest for regist: " + voUser);
+        String deviceId = request.getHeader(HEADER_DEVICE_ID);
+        if (voUser == null) {
             voUser = new VoUser();
         }
-		voUser.setDeviceId(deviceId);
-		return UserService.regist(voUser);
-	}
+        voUser.setDeviceId(deviceId);
+        return UserService.regist(voUser);
+    }
 
-	/**
-	 * List all groups for special user
-	 * 
-	 * @param userId
-	 * @return
-	 */
-	@GET
-	@Path("{userId}/group")
-	@Produces(MediaType.APPLICATION_JSON)
-	public VoResponse group(@PathParam("userId") long userId) {
-		AiurLog.logger().info("Receieving quest for group with userID : " + userId);
-		return UserService.queryGroup(userId);
-	}
+    /**
+     * List all groups for special user
+     * 
+     * @param userId
+     * @return
+     */
+    @GET
+    @Path("{userId}/group")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse group(@PathParam("userId") long userId) {
+        AiurLog.logger().info("Receieving quest for group with userID : " + userId);
+        return UserService.queryGroup(userId);
+    }
 }

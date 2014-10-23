@@ -13,6 +13,6 @@ public class RespStatus {
     public static final int INVALID_USER_EXISTS  = 4008;
     public static final int INVALID_CREATE_USER_FAILED  = 4009;
     
-    public static final int NO_DATA_FOUND = 3000;
+    public static final int WARN_NO_DATA_FOUND = 3000;
     
 }

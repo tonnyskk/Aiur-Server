@@ -15,11 +15,6 @@
 		</init-param>
 
 		<init-param>
-			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-			<param-value>com.origin.aiur.filter.RequestFilter</param-value>
-		</init-param>
-
-		<init-param>
 			<param-name>com.sun.jersey.config.property.packages</param-name>
 			<param-value>com.origin.aiur.app</param-value>
 		</init-param>
