@@ -3,8 +3,11 @@ package com.origin.aiur.orm;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.origin.aiur.pojo.VoGroup;
+import com.origin.aiur.pojo.VoGroupActivity;
 import com.origin.aiur.pojo.VoUser;
 
 public class DbService {
@@ -62,7 +65,7 @@ public class DbService {
     public static VoUser getUserAccount(long userId) throws Exception {
         VoUser userInfo = null;
         try {
-            userInfo = (VoUser) DbOrm.getORMClient().queryForObject("getUserAccount", userId);
+            userInfo = (VoUser) DbOrm.getORMClient().queryForObject("queryUserAccount", userId);
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
@@ -73,6 +76,35 @@ public class DbService {
         return userInfo;
     }
     
+    @SuppressWarnings("unchecked")
+	public static List<VoGroup> getUserGroupList(long userID) throws Exception {
+    	List<VoGroup> groupList = null;
+		try {
+			groupList = (List<VoGroup>) DbOrm.getORMClient().queryForList("queryUserGroupList", userID);
+		} catch (SQLException e) {
+			e.printStackTrace();
+            throw e;
+		} catch (IOException e) {
+			e.printStackTrace();
+            throw e;
+		}
+		return groupList;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public static List<VoGroupActivity> getGroupActivityList(long userId) throws Exception {
+    	List<VoGroupActivity> activityList = null;
+		try {
+			activityList = (List<VoGroupActivity>) DbOrm.getORMClient().queryForList("queryGroupActivity", userId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+            throw e;
+		} catch (IOException e) {
+			e.printStackTrace();
+            throw e;
+		}
+		return activityList;
+    }
 //    
 //    
 //    // **************************************************************************

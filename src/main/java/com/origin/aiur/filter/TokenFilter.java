@@ -31,6 +31,8 @@ public class TokenFilter implements Filter {
 
 		String token = request.getHeader("token");
 		String deviceId = request.getHeader("device-id");
+		String uId = request.getHeader("uid");
+
 		String reqpath = request.getPathInfo();
 
 		AiurLog.logger().debug("req-path=" + reqpath + ",token=" + token);
@@ -40,14 +42,14 @@ public class TokenFilter implements Filter {
 			return;
 		}
 
-		if (reqpath.equals("/user/startup") || reqpath.equals("/user/login") || reqpath.equals("/user/reg")) {
+		if (reqpath.equals("/user/startup")) {
 			arg2.doFilter(arg0, arg1);
 		} else {
 			if (AiurUtils.isEmpty(token)) {
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "bad request!");
 				return;
-
 			}
+
 			Map<String, String> paramMap = TokenUtil.decodeToken(token);
 			// No valid token found, bad request
 			if (paramMap.isEmpty()) {
@@ -66,6 +68,12 @@ public class TokenFilter implements Filter {
 			String deviceInfo = paramMap.get(TokenUtil.TOKEN_DEVICE_ID);
 			if (AiurUtils.isEmpty(deviceInfo) || !deviceId.equals(deviceInfo)) {
 				response.sendError(ERROR_TOKEN_INVALID, "invalid device, need re-login");
+				return;
+			}
+			// If user id consist
+			String userId = paramMap.get(TokenUtil.TOKEN_USER_ID);
+			if (AiurUtils.isEmpty(userId) || !uId.equals(userId)) {
+				response.sendError(ERROR_TOKEN_INVALID, "invalid user, need re-login");
 				return;
 			}
 			arg2.doFilter(arg0, arg1);

@@ -3,14 +3,14 @@ package com.origin.aiur.pojo;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class VoReponse {
+public class VoResponse {
     private int statusCode;
     private String statusMessage;
     private Object data;
     private String token;
     private String key;
 
-    public VoReponse() {
+    public VoResponse() {
     }
 
     public int getStatusCode() {
