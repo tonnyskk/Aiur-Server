@@ -2,34 +2,35 @@
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 
 <sqlMap namespace="WbQuerySql">
-	<typeAlias alias="UserItem" type="com.origin.aiur.pojo.VoUser"/>
-	<typeAlias alias="GroupItem" type="com.origin.aiur.pojo.VoGroup"/>
-	<typeAlias alias="GpActivityItem" type="com.origin.aiur.pojo.VoGroupActivity"/>
-	
+	<typeAlias alias="UserItem" type="com.origin.aiur.pojo.VoUser" />
+	<typeAlias alias="GroupItem" type="com.origin.aiur.pojo.VoGroup" />
+	<typeAlias alias="GpActivityItem" type="com.origin.aiur.pojo.VoGroupActivity" />
+
 	<resultMap id="UserResult" class="UserItem">
-		<result property="userID" column="user_id" javaType="long"/>
-		<result property="loginName" column="login_name"/>
-		<result property="nickName" column="nick_name"/>
-		<result property="userGroupList" column="ref_id" select="queryUserGroupList"/>
-	</resultMap>
-	
-	<resultMap id="GroupResult" class="GroupItem">
-		<result property="groupId" column="group_id" javaType="long"/>
-		<result property="groupName" column="group_name"/>
-		<result property="ownerUserId" column="owner_id" javaType="long"/>
-	</resultMap>
-	
-	<resultMap id="GpAcitivityResult" class="GpActivityItem">
-		<result property="activityId" column="consume_id" javaType="long"/>
-		<result property="groupId" column="group_id" javaType="long"/>
-		<result property="groupName" column="group_name"/>
-		<result property="description" column="description"/>
-		<result property="money" column="money" javaType="double"/>
-		<result property="status" column="status"/>
-		<result property="createTime" column="create_time" javaType="long"/>
+		<result property="userID" column="user_id" javaType="long" />
+		<result property="loginName" column="login_name" />
+		<result property="nickName" column="nick_name" />
+		<result property="userGroupList" column="ref_id" select="queryUserGroupList" />
 	</resultMap>
 
-	<select id="checkUserAccount" parameterClass="java.util.Map" resultMap="UserResult">
+	<resultMap id="GroupResult" class="GroupItem">
+		<result property="groupId" column="group_id" javaType="long" />
+		<result property="groupName" column="group_name" />
+		<result property="ownerUserId" column="owner_id" javaType="long" />
+	</resultMap>
+
+	<resultMap id="GpAcitivityResult" class="GpActivityItem">
+		<result property="activityId" column="consume_id" javaType="long" />
+		<result property="groupId" column="group_id" javaType="long" />
+		<result property="groupName" column="group_name" />
+		<result property="description" column="description" />
+		<result property="money" column="money" javaType="double" />
+		<result property="status" column="status" />
+		<result property="createTime" column="create_time" javaType="long" />
+	</resultMap>
+
+	<select id="checkUserAccount" parameterClass="java.util.Map"
+		resultMap="UserResult">
 		<![CDATA[
 			SELECT user_id,
 				   login_name,
@@ -55,15 +56,16 @@
 			 ORDER BY g.create_time desc
 		]]>
 	</select>
-	
-	<select id="isUserExists" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+
+	<select id="isUserExists" parameterClass="java.lang.String"
+		resultClass="java.lang.Integer">
 		<![CDATA[
 			SELECT COUNT(1)
 			  FROM aiur_users
 			 WHERE login_name = #value#
 		]]>
 	</select>
-	
+
 	<insert id="insertNewUser">
 		<![CDATA[
 			INSERT INTO aiur_users(
@@ -86,7 +88,8 @@
 	</insert>
 
 
-	<select id="queryUserAccount" parameterClass="java.lang.Long" resultMap="UserResult">
+	<select id="queryUserAccount" parameterClass="java.lang.Long"
+		resultMap="UserResult">
 		<![CDATA[
 			SELECT user_id,
 				   login_name,
@@ -96,8 +99,9 @@
 			 WHERE user_id = #value#
 		]]>
 	</select>
-	
-	<select id="queryGroupActivity" parameterClass="java.lang.Long" resultMap="GpAcitivityResult">
+
+	<select id="queryGroupActivity" parameterClass="java.lang.Long"
+		resultMap="GpAcitivityResult">
 		<![CDATA[
 			SELECT g.consume_id,
 				   g.group_id,
@@ -115,4 +119,60 @@
 			 ORDER BY g.update_time desc 
 		]]>
 	</select>
+
+	<select id="queryUserConsumeSummary" parameterClass="java.lang.Long" resultClass="java.lang.Double">
+		<![CDATA[
+			SELECT IFNULL(sum(money), 0) as total_consume
+			  FROM aiur_user_consume_detail
+			 WHERE user_id = #value#
+		]]>
+	</select>
+
+	<select id="queryUserIncomingSummary" parameterClass="java.lang.Long" resultClass="java.lang.Double">
+		<![CDATA[
+			SELECT IFNULL(sum(money), 0) as total_consume
+			  FROM aiur_user_incomming
+			 WHERE user_id = #value#
+			   AND status = 'OK'
+		]]>
+	</select>
+
+	<insert id="insertNewGroup">
+		<![CDATA[
+			INSERT INTO aiur_groups(
+				owner_id,
+				group_name,
+				group_desc,
+				create_time,
+				update_time
+			)VALUES(
+				#ownerUserId:DECIMAL#,
+				#groupName:VARCHAR#,
+				#groupDesc:VARCHAR#,
+				now(),
+				now()
+			)
+		]]>
+		<selectKey resultClass="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<insert id="insertUserGroupRef">
+	    <![CDATA[
+			INSERT INTO aiur_rel_user_group(
+				user_id,
+				group_id,
+				status,
+				create_time,
+				update_time
+			)VALUES(
+				#user_id:DECIMAL#,
+				#group_id:DECIMAL#,
+				'JOINED',
+				now(),
+				now()
+			)
+		]]>
+	</insert>
 </sqlMap>

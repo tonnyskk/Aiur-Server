@@ -4,12 +4,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class VoGroup {
+    private long ownerUserId;
     private long groupId;
     private String groupName;
-    private long ownerUserId;
+    private String groupDesc;
 
     public VoGroup() {
-
     }
 
     public long getGroupId() {
@@ -28,7 +28,15 @@ public class VoGroup {
         this.groupName = groupName;
     }
 
-    public long isOwnerUserId() {
+    public String getGroupDesc() {
+        return groupDesc;
+    }
+
+    public void setGroupDesc(String groupDesc) {
+        this.groupDesc = groupDesc;
+    }
+
+    public long getOwnerUserId() {
         return ownerUserId;
     }
 
@@ -36,4 +44,5 @@ public class VoGroup {
         this.ownerUserId = ownerUserId;
     }
 
+    
 }

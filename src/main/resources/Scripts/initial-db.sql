@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS `aiur_groups`;
 CREATE TABLE `aiur_groups`(
   `group_id` INT(16) NOT NULL AUTO_INCREMENT,
   `group_name` VARCHAR(64) COLLATE utf8_bin DEFAULT NULL,
+  `group_desc` VARCHAR(256) COLLATE utf8_bin DEFAULT NULL,
   `owner_id` DECIMAL(16, 0) DEFAULT NULL,
   `create_time` DATETIME DEFAULT NULL,
   `update_time` DATETIME DEFAULT NULL,

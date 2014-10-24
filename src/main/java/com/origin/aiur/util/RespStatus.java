@@ -12,6 +12,7 @@ public class RespStatus {
     public static final int INVALID_PARAM_EMPTY_NICK  = 4007;
     public static final int INVALID_USER_EXISTS  = 4008;
     public static final int INVALID_CREATE_USER_FAILED  = 4009;
+    public static final int INVALID_PARAM_EMPTY_GP_NAME  = 4010;
     
     public static final int WARN_NO_DATA_FOUND = 3000;
     

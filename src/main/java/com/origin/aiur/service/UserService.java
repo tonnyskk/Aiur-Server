@@ -3,6 +3,7 @@ package com.origin.aiur.service;
 import java.util.List;
 
 import com.origin.aiur.orm.DbService;
+import com.origin.aiur.pojo.VoFinance;
 import com.origin.aiur.pojo.VoGroup;
 import com.origin.aiur.pojo.VoResponse;
 import com.origin.aiur.pojo.VoUser;
@@ -105,6 +106,25 @@ public class UserService {
         } catch (Exception e) {
             AiurLog.logger().error(e.getMessage(), e);
 
+            response.setStatusCode(RespStatus.ERROR_EXCEPTION);
+            response.setStatusMessage(e.getMessage());
+        }
+
+        return response;
+    }
+
+    public static VoResponse queryFinance(long userId) {
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
+
+        try {
+            VoFinance finance = new VoFinance();
+            finance.setUserId(userId);
+            finance.setConsumeSummary(DbService.getUserConsumeSummary(userId));
+            finance.setIncomingSummmary(DbService.getUserIncomingSummary(userId));
+            response.setData(finance);
+        } catch (Exception e) {
+            AiurLog.logger().error(e.getMessage(), e);
             response.setStatusCode(RespStatus.ERROR_EXCEPTION);
             response.setStatusMessage(e.getMessage());
         }

@@ -110,7 +110,7 @@ public class UserRest {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public VoResponse regist(@Context HttpServletRequest request, VoUser voUser) {
-        AiurLog.logger().info("Receieving quest for regist: " + voUser);
+        AiurLog.logger().info("Receieving quest for regist > " + voUser);
         String deviceId = request.getHeader(HEADER_DEVICE_ID);
         if (voUser == null) {
             voUser = new VoUser();
@@ -129,7 +129,21 @@ public class UserRest {
     @Path("{userId}/group")
     @Produces(MediaType.APPLICATION_JSON)
     public VoResponse group(@PathParam("userId") long userId) {
-        AiurLog.logger().info("Receieving quest for group with userID : " + userId);
+        AiurLog.logger().info("Query group for user > " + userId);
         return UserService.queryGroup(userId);
+    }
+
+    /**
+     * Load user finance summary for special user
+     * 
+     * @param userId
+     * @return
+     */
+    @GET
+    @Path("{userId}/finance")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse finance(@PathParam("userId") long userId) {
+        AiurLog.logger().info("Finance summary for user > " + userId);
+        return UserService.queryFinance(userId);
     }
 }
