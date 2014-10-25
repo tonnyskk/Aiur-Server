@@ -32,4 +32,12 @@ public class GroupRest {
         AiurLog.logger().info("Create group > " + voGroup);
         return GroupService.createNewGroup(voGroup);
     }
+    
+    @GET
+    @Path("/search/{userId}/{searchText}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse search(@PathParam("userId") long userId, @PathParam("searchText") String searchText) {
+        AiurLog.logger().info("Search grop for user > " + userId + ", with text > " + searchText);
+        return GroupService.searchGroup(userId, searchText);
+    }
 }

@@ -54,4 +54,24 @@ public class GroupService {
         return response;
     }
 
+    public static VoResponse searchGroup(long userId, String searchText) {
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
+
+        try {
+            List<VoGroup> searchGroupList = DbService.searchGroupList(userId, searchText);
+            if (searchGroupList == null || searchGroupList.isEmpty()) {
+                response.setStatusCode(RespStatus.INVALID_GROUP_NOT_FOUND);
+            } else {
+                response.setData(searchGroupList);
+            }
+        } catch (Exception e) {
+            AiurLog.logger().error(e.getMessage(), e);
+
+            response.setStatusCode(RespStatus.ERROR_EXCEPTION);
+            response.setStatusMessage(e.getMessage());
+        }
+
+        return response;
+    }
 }

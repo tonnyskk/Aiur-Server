@@ -16,6 +16,7 @@
 	<resultMap id="GroupResult" class="GroupItem">
 		<result property="groupId" column="group_id" javaType="long" />
 		<result property="groupName" column="group_name" />
+		<result property="groupDesc" column="group_desc" />
 		<result property="ownerUserId" column="owner_id" javaType="long" />
 	</resultMap>
 
@@ -47,6 +48,7 @@
 		<![CDATA[
 			SELECT g.group_id,
 			       g.group_name,
+			       g.group_desc,
 			       g.owner_id
 			  FROM aiur_groups g,
 			       aiur_rel_user_group r
@@ -175,4 +177,23 @@
 			)
 		]]>
 	</insert>
+
+	<select id="searchGroupList" parameterClass="java.util.Map" resultMap="GroupResult">
+		<![CDATA[
+			SELECT g.group_id,
+				   CONCAT(g.group_name, '/', u.nick_name) AS group_name,
+			       g.group_desc,
+				   g.owner_id
+			  FROM aiur_groups g,
+			       aiur_users u
+			 WHERE g.owner_id = u.user_id
+			   AND g.group_name LIKE '%' || #search_text:VARCHAR# ||'%'
+			   AND g.group_id NOT IN (SELECT g.group_id
+			                            FROM aiur_groups g,
+			                                 aiur_rel_user_group r
+			                           WHERE g.group_id = r.group_id
+			                             AND r.user_id = #user_id:DECIMAL#
+			                             AND r.status IN ('JOINED', 'PENDING'))
+		]]>
+	</select>
 </sqlMap>

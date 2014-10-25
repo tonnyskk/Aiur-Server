@@ -44,5 +44,9 @@ public class VoGroup {
         this.ownerUserId = ownerUserId;
     }
 
-    
+    @Override
+    public String toString() {
+        return "VoGroup [groupId=" + groupId + ", groupName=" + groupName + ", groupDesc=" + groupDesc + "]";
+    }
+
 }

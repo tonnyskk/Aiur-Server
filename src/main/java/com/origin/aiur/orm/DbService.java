@@ -144,4 +144,23 @@ public class DbService {
             throw e;
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static List<VoGroup> searchGroupList(long userId, String searchText) throws Exception {
+        List<VoGroup> groupList = null;
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("user_id", userId);
+            param.put("search_text", searchText);
+            groupList = (List<VoGroup>) DbOrm.getORMClient().queryForList("searchGroupList", param);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return groupList;
+    }
 }

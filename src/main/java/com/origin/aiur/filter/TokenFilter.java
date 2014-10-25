@@ -35,7 +35,8 @@ public class TokenFilter implements Filter {
 
 		String reqpath = request.getPathInfo();
 
-		AiurLog.logger().debug("req-path=" + reqpath + ",token=" + token);
+        AiurLog.logger().debug("");
+		AiurLog.logger().debug("req-path=" + reqpath );
 
 		if (AiurUtils.isEmpty(deviceId)) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "bad request!");
