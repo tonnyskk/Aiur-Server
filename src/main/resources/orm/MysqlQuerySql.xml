@@ -171,7 +171,7 @@
 			)VALUES(
 				#user_id:DECIMAL#,
 				#group_id:DECIMAL#,
-				'JOINED',
+				#status:VARCHAR#,
 				now(),
 				now()
 			)
@@ -194,6 +194,15 @@
 			                           WHERE g.group_id = r.group_id
 			                             AND r.user_id = #user_id:DECIMAL#
 			                             AND r.status IN ('JOINED', 'PENDING'))
+		]]>
+	</select>
+	
+	<select id="getUserGroup" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		<![CDATA[
+			SELECT count(1)
+			  FROM aiur_rel_user_group
+			 WHERE user_id =  #user_id:DECIMAL#
+			   AND group_id = #group_id:DECIMAL#
 		]]>
 	</select>
 </sqlMap>

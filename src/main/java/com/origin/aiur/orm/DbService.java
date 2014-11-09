@@ -11,13 +11,19 @@ import com.origin.aiur.pojo.VoGroupActivity;
 import com.origin.aiur.pojo.VoUser;
 
 public class DbService {
-
+    private static final String PARAM_LOGIN_NAME = "login_name";
+    private static final String PARAM_PASSWORD = "pwd_val";
+    private static final String PARAM_NICK_NAME = "nick_name";
+    private static final String PARAM_GROUP_ID = "group_id";
+    private static final String PARAM_USER_ID = "user_id";
+    private static final String PARAM_STATUS = "status";
+    
     public static VoUser checkUserAccount(String loginName, String pwd) throws Exception {
         VoUser userInfo = null;
         try {
             Map<String, String> param = new HashMap<String, String>();
-            param.put("login_name", loginName);
-            param.put("pwd_val", pwd);
+            param.put(PARAM_LOGIN_NAME, loginName);
+            param.put(PARAM_PASSWORD, pwd);
             userInfo = (VoUser) DbOrm.getORMClient().queryForObject("checkUserAccount", param);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -48,9 +54,9 @@ public class DbService {
         long userId = 0L;
         try {
             Map<String, String> param = new HashMap<String, String>();
-            param.put("login_name", loginName);
-            param.put("pwd_val", password);
-            param.put("nick_name", nickName);
+            param.put(PARAM_LOGIN_NAME, loginName);
+            param.put(PARAM_PASSWORD, password);
+            param.put(PARAM_NICK_NAME, nickName);
             userId = (Long) DbOrm.getORMClient().insert("insertNewUser", param);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -133,8 +139,9 @@ public class DbService {
             long groupId = (Long) DbOrm.getORMClient().insert("insertNewGroup", voGroup);
 
             Map<String, Object> param = new HashMap<String, Object>();
-            param.put("group_id", groupId);
-            param.put("user_id", voGroup.getOwnerUserId());
+            param.put(PARAM_GROUP_ID, groupId);
+            param.put(PARAM_USER_ID, voGroup.getOwnerUserId());
+            param.put(PARAM_STATUS, "JOINED");
             DbOrm.getORMClient().insert("insertUserGroupRef", param);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,7 +157,7 @@ public class DbService {
         List<VoGroup> groupList = null;
         try {
             Map<String, Object> param = new HashMap<String, Object>();
-            param.put("user_id", userId);
+            param.put(PARAM_USER_ID, userId);
             param.put("search_text", searchText);
             groupList = (List<VoGroup>) DbOrm.getORMClient().queryForList("searchGroupList", param);
 
@@ -162,5 +169,28 @@ public class DbService {
             throw e;
         }
         return groupList;
+    }
+    
+    public static boolean joinGroupRequest(long userId, long groupId) throws Exception{
+        
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put(PARAM_USER_ID, userId);
+            param.put(PARAM_GROUP_ID, groupId);
+            param.put(PARAM_STATUS, "PENDING");
+            Integer refCnt = (Integer) DbOrm.getORMClient().queryForObject("getUserGroup", param);
+            if (refCnt.intValue() > 0) {
+                return false;
+            } else {
+                DbOrm.getORMClient().insert("insertUserGroupRef", param);
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

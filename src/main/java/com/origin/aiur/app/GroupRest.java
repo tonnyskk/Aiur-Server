@@ -40,4 +40,13 @@ public class GroupRest {
         AiurLog.logger().info("Search grop for user > " + userId + ", with text > " + searchText);
         return GroupService.searchGroup(userId, searchText);
     }
+    
+    @POST
+    @Path("/join/{userId}/{groupId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse join(@PathParam("userId") long userId, @PathParam("groupId") long groupId) {
+        AiurLog.logger().info("Join group request user > " + userId + " groupId > " + groupId);
+        return GroupService.joinGroupRequest(userId, groupId);
+    }
+    
 }

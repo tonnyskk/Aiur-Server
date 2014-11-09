@@ -74,4 +74,27 @@ public class GroupService {
 
         return response;
     }
+
+    public static VoResponse joinGroupRequest(long userId, long groupId) {
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
+
+        try {
+            boolean joinGroup = DbService.joinGroupRequest(userId, groupId);
+            if (!joinGroup) {
+              response.setStatusCode(RespStatus.WARN_GROUP_JOIN_REPEATE_REQUEST);
+            }
+            VoGroup group = new VoGroup();
+            group.setGroupId(groupId);
+            response.setData(group);
+        } catch (Exception e) {
+            AiurLog.logger().error(e.getMessage(), e);
+
+            response.setStatusCode(RespStatus.ERROR_EXCEPTION);
+            response.setStatusMessage(e.getMessage());
+        }
+
+        return response;
+    }
+
 }
