@@ -17,7 +17,7 @@ public class DbService {
     private static final String PARAM_GROUP_ID = "group_id";
     private static final String PARAM_USER_ID = "user_id";
     private static final String PARAM_STATUS = "status";
-    
+
     public static VoUser checkUserAccount(String loginName, String pwd) throws Exception {
         VoUser userInfo = null;
         try {
@@ -170,9 +170,27 @@ public class DbService {
         }
         return groupList;
     }
-    
-    public static boolean joinGroupRequest(long userId, long groupId) throws Exception{
-        
+
+    public static boolean isGroupExists(String groupName, long ownerId) throws Exception {
+        boolean isExists = false;
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("group_name", groupName);
+            param.put("owner_id", ownerId);
+            Integer groupCount = (Integer) DbOrm.getORMClient().queryForObject("checkUserGroupExists", param);
+            isExists = groupCount.intValue() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return isExists;
+    }
+
+    public static boolean joinGroupRequest(long userId, long groupId) throws Exception {
+
         try {
             Map<String, Object> param = new HashMap<String, Object>();
             param.put(PARAM_USER_ID, userId);
