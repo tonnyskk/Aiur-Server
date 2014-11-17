@@ -17,6 +17,9 @@ public class DbService {
     private static final String PARAM_GROUP_ID = "group_id";
     private static final String PARAM_USER_ID = "user_id";
     private static final String PARAM_STATUS = "status";
+    private static final String PARAM_SEARCH_TEXT = "search_text";
+    private static final String PARAM_GROUP_NAME = "group_name";
+    private static final String PARAM_OWNER_ID = "owner_id";
 
     public static VoUser checkUserAccount(String loginName, String pwd) throws Exception {
         VoUser userInfo = null;
@@ -158,7 +161,7 @@ public class DbService {
         try {
             Map<String, Object> param = new HashMap<String, Object>();
             param.put(PARAM_USER_ID, userId);
-            param.put("search_text", searchText);
+            param.put(PARAM_SEARCH_TEXT, searchText);
             groupList = (List<VoGroup>) DbOrm.getORMClient().queryForList("searchGroupList", param);
 
         } catch (SQLException e) {
@@ -175,8 +178,8 @@ public class DbService {
         boolean isExists = false;
         try {
             Map<String, Object> param = new HashMap<String, Object>();
-            param.put("group_name", groupName);
-            param.put("owner_id", ownerId);
+            param.put(PARAM_GROUP_NAME, groupName);
+            param.put(PARAM_OWNER_ID, ownerId);
             Integer groupCount = (Integer) DbOrm.getORMClient().queryForObject("checkUserGroupExists", param);
             isExists = groupCount.intValue() > 0;
         } catch (SQLException e) {

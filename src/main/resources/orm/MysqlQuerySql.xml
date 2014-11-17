@@ -187,7 +187,7 @@
 			  FROM aiur_groups g,
 			       aiur_users u
 			 WHERE g.owner_id = u.user_id
-			   AND g.group_name LIKE '%' || #search_text:VARCHAR# ||'%'
+			   AND g.group_name LIKE CONCAT('%', #search_text:VARCHAR#, '%')
 			   AND g.group_id NOT IN (SELECT g.group_id
 			                            FROM aiur_groups g,
 			                                 aiur_rel_user_group r
