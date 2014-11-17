@@ -17,11 +17,19 @@ import com.origin.aiur.util.AiurLog;
 public class GroupRest {
 
     @GET
-    @Path("/activity/{userId}")
+    @Path("/activity/user/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
     public VoResponse group(@PathParam("userId") long userId) {
-        AiurLog.logger().info("Query grop list for user > " + userId);
-        return GroupService.queryGroupActivity(userId);
+        AiurLog.logger().info("Query user acitvity for user > " + userId);
+        return GroupService.queryUserActivity(userId);
+    }
+
+    @GET
+    @Path("/activity/{userId}/{groupId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse groupActivity(@PathParam("userId") long userId, @PathParam("groupId") long groupId) {
+        AiurLog.logger().info("Query group activity for user>" + userId + " @ group = " + groupId);
+        return GroupService.queryGroupActivity(groupId, userId);
     }
     
     @POST
@@ -48,5 +56,12 @@ public class GroupRest {
         AiurLog.logger().info("Join group request user > " + userId + " groupId > " + groupId);
         return GroupService.joinGroupRequest(userId, groupId);
     }
-    
+
+    @POST
+    @Path("/finance/{userId}/{groupId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse finance(@PathParam("userId") long userId, @PathParam("groupId") long groupId) {
+        AiurLog.logger().info("Join group request user > " + userId + " groupId > " + groupId);
+        return GroupService.queryFinance(userId, groupId);
+    }
 }

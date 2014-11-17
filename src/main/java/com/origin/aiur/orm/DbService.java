@@ -101,10 +101,28 @@ public class DbService {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<VoGroupActivity> getGroupActivityList(long userId) throws Exception {
+    public static List<VoGroupActivity> getUserActivityList(long userId) throws Exception {
         List<VoGroupActivity> activityList = null;
         try {
-            activityList = (List<VoGroupActivity>) DbOrm.getORMClient().queryForList("queryGroupActivity", userId);
+            activityList = (List<VoGroupActivity>) DbOrm.getORMClient().queryForList("queryUserActivity", userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return activityList;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<VoGroupActivity> getGroupActivityList(long groupId, long userId) throws Exception {
+        List<VoGroupActivity> activityList = null;
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put(PARAM_USER_ID, userId);
+            param.put(PARAM_GROUP_ID, groupId);
+            activityList = (List<VoGroupActivity>) DbOrm.getORMClient().queryForList("queryGroupActivity", param);
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
@@ -116,17 +134,36 @@ public class DbService {
     }
 
     public static double getUserConsumeSummary(long userId) throws Exception {
-        return queryUserFinance(userId, "queryUserConsumeSummary");
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put(PARAM_USER_ID, userId);
+        return queryUserFinance(param, "queryUserConsumeSummary");
     }
 
     public static double getUserIncomingSummary(long userId) throws Exception {
-        return queryUserFinance(userId, "queryUserIncomingSummary");
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put(PARAM_USER_ID, userId);
+        return queryUserFinance(param, "queryUserIncomingSummary");
     }
 
-    private static double queryUserFinance(long userId, String sqlMapKey) throws Exception {
+    public static double getUserConsumeSummary(long userId, long groupId) throws Exception {
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put(PARAM_USER_ID, userId);
+        param.put(PARAM_GROUP_ID, groupId);
+        
+        return queryUserFinance(param, "queryUserConsumeSummary");
+    }
+
+    public static double getUserIncomingSummary(long userId, long groupId) throws Exception {
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put(PARAM_USER_ID, userId);
+        param.put(PARAM_GROUP_ID, groupId);
+        return queryUserFinance(param, "queryUserIncomingSummary");
+    }
+
+    private static double queryUserFinance(Map<String, Object> param , String sqlMapKey) throws Exception {
         double finance = 0L;
         try {
-            finance = (Double) DbOrm.getORMClient().queryForObject(sqlMapKey, userId);
+            finance = (Double) DbOrm.getORMClient().queryForObject(sqlMapKey, param);
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;

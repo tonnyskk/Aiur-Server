@@ -30,6 +30,15 @@
 		<result property="createTime" column="create_time" javaType="long" />
 	</resultMap>
 
+	<resultMap id="GpUserAcitivityResult" class="GpActivityItem">
+		<result property="createTime" column="create_time" javaType="long" />
+		<result property="description" column="user_desc" />
+		<result property="status" column="status" />
+		<result property="type" column="type" />
+		<result property="groupConsume" column="gp_consume" javaType="double" />
+		<result property="userConsume" column="personal_consume" javaType="double" />
+	</resultMap>
+
 	<select id="checkUserAccount" parameterClass="java.util.Map"
 		resultMap="UserResult">
 		<![CDATA[
@@ -102,8 +111,7 @@
 		]]>
 	</select>
 
-	<select id="queryGroupActivity" parameterClass="java.lang.Long"
-		resultMap="GpAcitivityResult">
+	<select id="queryUserActivity" parameterClass="java.lang.Long" resultMap="GpAcitivityResult">
 		<![CDATA[
 			SELECT g.consume_id,
 				   g.group_id,
@@ -122,21 +130,73 @@
 		]]>
 	</select>
 
-	<select id="queryUserConsumeSummary" parameterClass="java.lang.Long" resultClass="java.lang.Double">
+	<select id="queryGroupActivity" parameterClass="java.util.Map" resultMap="GpUserAcitivityResult">
 		<![CDATA[
-			SELECT IFNULL(sum(money), 0) as total_consume
-			  FROM aiur_user_consume_detail
-			 WHERE user_id = #value#
+		   SELECT I01.create_time,
+		          I01.type,
+		          I01.user_desc,
+		          I01.status,
+		          I01.gp_consume,
+		          I01.personal_consume
+		     FROM ( SELECT 'GROUP' AS type,
+					       usr.nick_name AS user_desc,
+					       rel.status,
+					       UNIX_TIMESTAMP(rel.update_time) * 1000 as create_time,
+					       0 as gp_consume,
+					       0 as personal_consume
+					  FROM aiur_rel_user_group rel,
+					       aiur_users usr
+					 WHERE rel.user_id = usr.user_id
+					   AND rel.group_id = #group_id:DECIMAL#
+					UNION
+					SELECT 'CONSUME' AS type,
+						   gc.description AS user_desc,
+						   gc.status,
+						   UNIX_TIMESTAMP(gc.update_time) * 1000 as create_time,
+						   gc.money as gp_consume,
+						   uc.money as personal_consume
+					  FROM aiur_group_consume gc,
+					       aiur_user_consume_detail uc
+					 WHERE gc.consume_id = uc.consume_id
+					   AND uc.user_id = #user_id:DECIMAL#
+					   AND gc.group_id = #group_id:DECIMAL#
+				  ) I01
+			ORDER BY I01.create_time DESC
 		]]>
 	</select>
 
-	<select id="queryUserIncomingSummary" parameterClass="java.lang.Long" resultClass="java.lang.Double">
+	<select id="queryUserConsumeSummary" parameterClass="java.util.Map" resultClass="java.lang.Double">
 		<![CDATA[
-			SELECT IFNULL(sum(money), 0) as total_consume
+			SELECT IFNULL(sum(c.money), 0) as total_consume
+			  FROM aiur_user_consume_detail c,
+			       aiur_group_consume g
+			 WHERE c.consume_id = g.consume_id
+			   AND g.status = 'OK'
+			   AND c.user_id = #user_id:DECIMAL#
+		]]>
+		<dynamic>
+			<isNotEmpty property="group_id">
+				<![CDATA[
+					   AND g.group_id = #group_id:DECIMAL#
+				]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="queryUserIncomingSummary" parameterClass="java.util.Map" resultClass="java.lang.Double">
+		<![CDATA[
+			SELECT IFNULL(sum(i.money), 0) as total_consume
 			  FROM aiur_user_incomming
-			 WHERE user_id = #value#
+			 WHERE user_id = #user_id:DECIMAL#
 			   AND status = 'OK'
 		]]>
+		<dynamic>
+			<isNotEmpty property="group_id">
+				<![CDATA[
+					   AND group_id = #group_id:DECIMAL#
+				]]>
+			</isNotEmpty>
+		</dynamic>
 	</select>
 
 	<insert id="insertNewGroup">
