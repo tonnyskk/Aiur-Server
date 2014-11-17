@@ -42,7 +42,12 @@ public class GroupService {
                 response.setStatusMessage("INVALID_PARAM_EMPTY_GP_NAME");
                 return response;
             }
-
+            boolean isGroupExists = DbService.isGroupExists(voGroup.getGroupName(), voGroup.getOwnerUserId());
+            if (isGroupExists) {
+                response.setStatusCode(RespStatus.INVALID_GROUP_EXISTS);
+                response.setStatusMessage("INVALID_GROUP_EXISTS");
+                return response;
+            }
             DbService.createNewGroup(voGroup);
         } catch (Exception e) {
             AiurLog.logger().error(e.getMessage(), e);
