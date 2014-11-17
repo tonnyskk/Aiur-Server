@@ -14,6 +14,7 @@ public class RespStatus {
     public static final int INVALID_CREATE_USER_FAILED  = 4009;
     public static final int INVALID_PARAM_EMPTY_GP_NAME  = 4010;
     public static final int INVALID_GROUP_NOT_FOUND  = 4011;
+    public static final int INVALID_GROUP_EXISTS  = 4012;
     
     public static final int WARN_NO_DATA_FOUND = 3000;
     

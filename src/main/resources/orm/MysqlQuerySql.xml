@@ -196,4 +196,13 @@
 			                             AND r.status IN ('JOINED', 'PENDING'))
 		]]>
 	</select>
+	
+	<select id="checkUserGroupExists" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		<![CDATA[
+			SELECT COUNT(1)
+			  FROM aiur_groups
+			 WHERE group_name = #group_name:VARCHAR#
+			   AND owner_id = #owner_id:DECIMAL#
+		]]>
+	</select>
 </sqlMap>

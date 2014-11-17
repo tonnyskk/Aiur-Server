@@ -163,4 +163,23 @@ public class DbService {
         }
         return groupList;
     }
+    
+
+    public static boolean isGroupExists(String groupName, long ownerId) throws Exception {
+        boolean isExists = false;
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("group_name", groupName);
+            param.put("owner_id", ownerId);
+            Integer groupCount = (Integer) DbOrm.getORMClient().queryForObject("checkUserGroupExists", param);
+            isExists = groupCount.intValue() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return isExists;
+    }
 }
