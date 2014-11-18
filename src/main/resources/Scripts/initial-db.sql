@@ -39,7 +39,7 @@ CREATE TABLE `aiur_rel_user_group`(
   `rel_id` INT(16) NOT NULL AUTO_INCREMENT,
   `user_id` DECIMAL(16, 0) DEFAULT NULL,
   `group_id` DECIMAL(16, 0) DEFAULT NULL,
-  `status` ENUM('PENDING', 'JOINED', 'REJECT') DEFAULT 'PENDING',
+  `status` ENUM('PENDING', 'JOINED', 'REJECT', 'LEFT') DEFAULT 'PENDING',
   `create_time` DATETIME DEFAULT NULL,
   `update_time` DATETIME DEFAULT NULL,
    PRIMARY KEY (`rel_id`),

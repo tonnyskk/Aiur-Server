@@ -7,8 +7,6 @@ public class VoGroupActivity {
     private long activityId;
     private long groupId;
     private String groupName;
-    private double money;
-
     private String description;
     private String status;
     private long createTime;
@@ -38,14 +36,6 @@ public class VoGroupActivity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public double getMoney() {
-        return money;
-    }
-
-    public void setMoney(double money) {
-        this.money = money;
     }
 
     public String getStatus() {

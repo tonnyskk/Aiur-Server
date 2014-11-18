@@ -57,11 +57,21 @@ public class GroupRest {
         return GroupService.joinGroupRequest(userId, groupId);
     }
 
-    @POST
+    @GET
     @Path("/finance/{userId}/{groupId}")
     @Produces(MediaType.APPLICATION_JSON)
     public VoResponse finance(@PathParam("userId") long userId, @PathParam("groupId") long groupId) {
-        AiurLog.logger().info("Join group request user > " + userId + " groupId > " + groupId);
+        AiurLog.logger().info("Query finance for user > " + userId + " @groupId > " + groupId);
         return GroupService.queryFinance(userId, groupId);
     }
+    
+
+    @GET
+    @Path("/users/{groupId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public VoResponse groupUsers(@PathParam("groupId") long groupId) {
+        AiurLog.logger().info("Query user list in grop " + groupId);
+        return GroupService.queryUserList(groupId);
+    }
+    
 }

@@ -7,11 +7,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class VoUser {
     private long userID;
+    private long groupId;
     private String loginName;
     private String nickName;
     private String password;
     private String deviceId;
     private List<VoGroup> userGroupList;
+    private long createTime;
 
     public VoUser() {
 
@@ -63,6 +65,22 @@ public class VoUser {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+    
+    public long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 
     @Override

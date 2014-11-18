@@ -251,4 +251,20 @@ public class DbService {
             throw e;
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static List<VoUser> getGroupUserList(long groupId) throws Exception {
+        List<VoUser> groupList = null;
+        try {
+            groupList = (List<VoUser>) DbOrm.getORMClient().queryForList("queryGroupUserList", groupId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return groupList;
+    }
+
 }

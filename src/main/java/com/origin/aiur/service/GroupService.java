@@ -7,6 +7,7 @@ import com.origin.aiur.pojo.VoFinance;
 import com.origin.aiur.pojo.VoGroup;
 import com.origin.aiur.pojo.VoGroupActivity;
 import com.origin.aiur.pojo.VoResponse;
+import com.origin.aiur.pojo.VoUser;
 import com.origin.aiur.util.AiurLog;
 import com.origin.aiur.util.AiurUtils;
 import com.origin.aiur.util.RespStatus;
@@ -134,6 +135,22 @@ public class GroupService {
             finance.setConsumeSummary(DbService.getUserConsumeSummary(userId, groupId));
             finance.setIncomingSummmary(DbService.getUserIncomingSummary(userId, groupId));
             response.setData(finance);
+        } catch (Exception e) {
+            AiurLog.logger().error(e.getMessage(), e);
+            response.setStatusCode(RespStatus.ERROR_EXCEPTION);
+            response.setStatusMessage(e.getMessage());
+        }
+
+        return response;
+    }
+
+    public static VoResponse queryUserList(long groupId) {
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
+
+        try {
+            List<VoUser> userList = DbService.getGroupUserList(groupId);
+            response.setData(userList);
         } catch (Exception e) {
             AiurLog.logger().error(e.getMessage(), e);
             response.setStatusCode(RespStatus.ERROR_EXCEPTION);

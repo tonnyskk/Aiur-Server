@@ -25,7 +25,7 @@
 		<result property="groupId" column="group_id" javaType="long" />
 		<result property="groupName" column="group_name" />
 		<result property="description" column="description" />
-		<result property="money" column="money" javaType="double" />
+		<result property="groupConsume" column="money" javaType="double" />
 		<result property="status" column="status" />
 		<result property="createTime" column="create_time" javaType="long" />
 	</resultMap>
@@ -39,6 +39,13 @@
 		<result property="userConsume" column="personal_consume" javaType="double" />
 	</resultMap>
 
+	<resultMap id="GroupUserResult" class="UserItem">
+		<result property="userID" column="user_id" javaType="long" />
+		<result property="nickName" column="nick_name" />
+		<result property="groupId" column="group_id" javaType="long" />
+		<result property="createTime" column="update_time" javaType="long" />
+	</resultMap>
+	
 	<select id="checkUserAccount" parameterClass="java.util.Map"
 		resultMap="UserResult">
 		<![CDATA[
@@ -99,8 +106,7 @@
 	</insert>
 
 
-	<select id="queryUserAccount" parameterClass="java.lang.Long"
-		resultMap="UserResult">
+	<select id="queryUserAccount" parameterClass="java.lang.Long" resultMap="UserResult">
 		<![CDATA[
 			SELECT user_id,
 				   login_name,
@@ -125,6 +131,7 @@
 			       aiur_groups ag
 			 WHERE g.group_id = r.group_id
 			   AND g.group_id = ag.group_id
+			   AND g.status IN ('PENDING', 'OK')
 			   AND r.user_id  = #value#
 			 ORDER BY g.update_time desc 
 		]]>
@@ -147,6 +154,7 @@
 					  FROM aiur_rel_user_group rel,
 					       aiur_users usr
 					 WHERE rel.user_id = usr.user_id
+					   AND rel.status IN ('PENDING', 'JOINED', 'LEFT')
 					   AND rel.group_id = #group_id:DECIMAL#
 					UNION
 					SELECT 'CONSUME' AS type,
@@ -160,6 +168,18 @@
 					 WHERE gc.consume_id = uc.consume_id
 					   AND uc.user_id = #user_id:DECIMAL#
 					   AND gc.group_id = #group_id:DECIMAL#
+					UNION
+					SELECT 'INCOMING' as type,
+					       usr.nick_name AS user_desc,
+					       ui.status,
+					       UNIX_TIMESTAMP(ui.update_time) * 1000 as create_time,
+					       0 as gp_consume,
+					       ui.money as personal_consume
+					  FROM aiur_user_incomming ui,
+					       aiur_users usr
+					 WHERE usr.user_id = ui.user_id
+					   AND ui.status in ('PENDING', 'OK')
+					   AND ui.group_id = #group_id:DECIMAL#
 				  ) I01
 			ORDER BY I01.create_time DESC
 		]]>
@@ -185,7 +205,7 @@
 
 	<select id="queryUserIncomingSummary" parameterClass="java.util.Map" resultClass="java.lang.Double">
 		<![CDATA[
-			SELECT IFNULL(sum(i.money), 0) as total_consume
+			SELECT IFNULL(sum(money), 0) as total_consume
 			  FROM aiur_user_incomming
 			 WHERE user_id = #user_id:DECIMAL#
 			   AND status = 'OK'
@@ -272,6 +292,20 @@
 			  FROM aiur_rel_user_group
 			 WHERE user_id =  #user_id:DECIMAL#
 			   AND group_id = #group_id:DECIMAL#
+		]]>
+	</select>
+	
+	<select id="queryGroupUserList" parameterClass="java.lang.Long" resultMap="GroupUserResult">
+		<![CDATA[
+			SELECT usr.user_id,
+			       usr.nick_name,
+			       rel.group_id,
+				   UNIX_TIMESTAMP(rel.update_time) * 1000 as update_time
+			  FROM aiur_users usr,
+			       aiur_rel_user_group rel
+			 WHERE usr.user_id = rel.user_id
+			   AND rel.status = 'JOINED'
+			   AND rel.group_id = #value#
 		]]>
 	</select>
 </sqlMap>
