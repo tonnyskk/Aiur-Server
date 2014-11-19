@@ -5,6 +5,7 @@
 	<typeAlias alias="UserItem" type="com.origin.aiur.pojo.VoUser" />
 	<typeAlias alias="GroupItem" type="com.origin.aiur.pojo.VoGroup" />
 	<typeAlias alias="GpActivityItem" type="com.origin.aiur.pojo.VoGroupActivity" />
+	<typeAlias alias="FinanceItem" type="com.origin.aiur.pojo.VoFinance" />
 
 	<resultMap id="UserResult" class="UserItem">
 		<result property="userID" column="user_id" javaType="long" />
@@ -44,6 +45,12 @@
 		<result property="nickName" column="nick_name" />
 		<result property="groupId" column="group_id" javaType="long" />
 		<result property="createTime" column="update_time" javaType="long" />
+	</resultMap>
+
+	<resultMap id="GpUserMoneyResult" class="FinanceItem">
+		<result property="userId" column="user_id" javaType="long" />
+		<result property="incomingSummmary" column="incoming_money" javaType="double" />
+		<result property="consumeSummary" column="consume_money" javaType="double" />
 	</resultMap>
 	
 	<select id="checkUserAccount" parameterClass="java.util.Map"
@@ -308,4 +315,71 @@
 			   AND rel.group_id = #value#
 		]]>
 	</select>
+
+	<select id="queryGroupUserMoney" parameterClass="java.lang.Long" resultMap="GpUserMoneyResult">
+		<![CDATA[
+			SELECT I01.user_id,
+			       I01.incoming_money,
+			       IFNULL(I02.consume_money, 0) AS consume_money
+			  FROM (SELECT user_id,
+			               IFNULL(SUM(money), 0) AS incoming_money
+			          FROM aiur_user_incomming
+			         WHERE group_id = 100
+			           AND status = 'OK'
+			         GROUP BY user_id
+			       ) I01 LEFT OUTER JOIN 
+			  	   (SELECT uout.user_id,
+			  	          IFNULL(SUM(uout.money),0) AS consume_money
+			  	     FROM aiur_group_consume gout,
+			  	          aiur_user_consume_detail uout
+			  	    WHERE gout.consume_id = uout.consume_id
+			  	      AND gout.status = 'OK'
+			  	      AND gout.group_id = #value#
+			  	    GROUP BY uout.user_id) I02
+			ON I01.user_id = I02.user_id
+		]]>
+	</select>
+	
+	
+	<insert id="insertGroupConsume">
+		<![CDATA[
+			INSERT INTO aiur_group_consume(
+				group_id,
+				description,
+				money,
+				status,
+				create_time,
+				update_time
+			)VALUES(
+				#groupId:DECIMAL#,
+				#description:VARCHAR#,
+				#money:DECIMAL#,
+				'PENDING',
+				now(),
+				now()
+			)
+		]]>
+		<selectKey resultClass="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<insert id="insertUserConsume">
+		<![CDATA[
+			INSERT INTO aiur_user_consume_detail(
+				consume_id,
+				user_id,
+				money,
+				create_time,
+				update_time
+			)VALUES(
+				#consume_id:DECIMAL#,
+				#user_id:VARCHAR#,
+				#money:DECIMAL#,
+				'PENDING',
+				now(),
+				now()
+			)
+		]]>
+	</insert>
 </sqlMap>

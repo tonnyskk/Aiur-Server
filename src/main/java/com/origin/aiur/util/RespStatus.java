@@ -5,6 +5,7 @@ public class RespStatus {
     public static final int ERROR_EXCEPTION = 4000;
     public static final int TOKEN_INVALID = 4001;
     public static final int TOKEN_EXIRE = 4002;
+    public static final int ERROR_REQUEST = 4003;
     public static final int USER_NOT_FOUND = 4004;
 
     public static final int INVALID_PARAM_EMPTY_USER = 4005;

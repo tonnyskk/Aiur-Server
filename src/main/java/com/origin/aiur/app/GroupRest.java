@@ -8,6 +8,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.origin.aiur.pojo.GroupCharge;
 import com.origin.aiur.pojo.VoGroup;
 import com.origin.aiur.pojo.VoResponse;
 import com.origin.aiur.service.GroupService;
@@ -73,5 +74,13 @@ public class GroupRest {
         AiurLog.logger().info("Query user list in grop " + groupId);
         return GroupService.queryUserList(groupId);
     }
-    
+
+    @POST
+    @Path("/charge")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public VoResponse charge(GroupCharge groupCharge) {
+        AiurLog.logger().info("Group pay request> " + groupCharge);
+        return GroupService.groupChargeReq(groupCharge);
+    }
 }

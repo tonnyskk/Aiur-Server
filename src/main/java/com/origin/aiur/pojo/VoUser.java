@@ -14,6 +14,8 @@ public class VoUser {
     private String deviceId;
     private List<VoGroup> userGroupList;
     private long createTime;
+    private double prepayMoney;
+    private double cosumeMoney;
 
     public VoUser() {
 
@@ -81,6 +83,22 @@ public class VoUser {
 
     public void setCreateTime(long createTime) {
         this.createTime = createTime;
+    }
+
+    public double getPrepayMoney() {
+        return prepayMoney;
+    }
+
+    public void setPrepayMoney(double prepayMoney) {
+        this.prepayMoney = prepayMoney;
+    }
+
+    public double getCosumeMoney() {
+        return cosumeMoney;
+    }
+
+    public void setCosumeMoney(double cosumeMoney) {
+        this.cosumeMoney = cosumeMoney;
     }
 
     @Override

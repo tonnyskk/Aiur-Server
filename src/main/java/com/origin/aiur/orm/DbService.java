@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ibatis.sqlmap.client.SqlMapClient;
+import com.origin.aiur.pojo.GroupCharge;
+import com.origin.aiur.pojo.VoFinance;
 import com.origin.aiur.pojo.VoGroup;
 import com.origin.aiur.pojo.VoGroupActivity;
 import com.origin.aiur.pojo.VoUser;
@@ -20,6 +23,8 @@ public class DbService {
     private static final String PARAM_SEARCH_TEXT = "search_text";
     private static final String PARAM_GROUP_NAME = "group_name";
     private static final String PARAM_OWNER_ID = "owner_id";
+    private static final String PARAM_CONSUME_ID = "consume_id";
+    private static final String PARAM_MONEY = "money";
 
     public static VoUser checkUserAccount(String loginName, String pwd) throws Exception {
         VoUser userInfo = null;
@@ -149,7 +154,7 @@ public class DbService {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put(PARAM_USER_ID, userId);
         param.put(PARAM_GROUP_ID, groupId);
-        
+
         return queryUserFinance(param, "queryUserConsumeSummary");
     }
 
@@ -160,7 +165,7 @@ public class DbService {
         return queryUserFinance(param, "queryUserIncomingSummary");
     }
 
-    private static double queryUserFinance(Map<String, Object> param , String sqlMapKey) throws Exception {
+    private static double queryUserFinance(Map<String, Object> param, String sqlMapKey) throws Exception {
         double finance = 0L;
         try {
             finance = (Double) DbOrm.getORMClient().queryForObject(sqlMapKey, param);
@@ -257,6 +262,18 @@ public class DbService {
         List<VoUser> groupList = null;
         try {
             groupList = (List<VoUser>) DbOrm.getORMClient().queryForList("queryGroupUserList", groupId);
+            List<VoFinance> userMoneyList = (List<VoFinance>) DbOrm.getORMClient().queryForList("queryGroupUserMoney", groupId);
+            if (userMoneyList != null && !userMoneyList.isEmpty() && groupList != null && !groupList.isEmpty()) {
+                for (VoUser user : groupList) {
+                    for (VoFinance userMoney : userMoneyList) {
+                        if (userMoney.getUserId() == user.getUserID()) {
+                            user.setPrepayMoney(userMoney.getIncomingSummmary());
+                            user.setCosumeMoney(userMoney.getConsumeSummary());
+                            break;
+                        }
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
@@ -265,6 +282,44 @@ public class DbService {
             throw e;
         }
         return groupList;
+    }
+
+    public static void insertChargeBatch(GroupCharge groupCharge) throws Exception {
+        List<Long> userList = groupCharge.getUserList();
+        double averageCost = groupCharge.getMoney() / userList.size();
+        SqlMapClient client = null;
+        try {
+            client = DbOrm.getORMClient();
+            long consumeId = (Long) client.insert("insertGroupConsume", groupCharge);
+
+            client.startTransaction();
+            client.startBatch();
+
+            for (Long userId : userList) {
+                Map<String, Object> param = new HashMap<String, Object>();
+                param.put(PARAM_USER_ID, userId);
+                param.put(PARAM_CONSUME_ID, consumeId);
+                param.put(PARAM_MONEY, averageCost);
+
+                if (userId.longValue() == groupCharge.getUserId() && groupCharge.isPrepaied()) {
+                    param.put(PARAM_MONEY, averageCost - groupCharge.getMoney());
+                } else {
+                    param.put(PARAM_MONEY, averageCost);
+                }
+
+                client.insert("insertUserConsume", param);
+            }
+
+            client.executeBatch();
+            client.commitTransaction();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (client != null) {
+                client.endTransaction();
+            }
+        }
     }
 
 }

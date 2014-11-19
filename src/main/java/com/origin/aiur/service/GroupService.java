@@ -3,6 +3,7 @@ package com.origin.aiur.service;
 import java.util.List;
 
 import com.origin.aiur.orm.DbService;
+import com.origin.aiur.pojo.GroupCharge;
 import com.origin.aiur.pojo.VoFinance;
 import com.origin.aiur.pojo.VoGroup;
 import com.origin.aiur.pojo.VoGroupActivity;
@@ -158,5 +159,31 @@ public class GroupService {
         }
 
         return response;
+    }
+    
+    public static VoResponse groupChargeReq(GroupCharge groupCharge) {
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
+
+        try {
+            if (groupCharge == null 
+                    || groupCharge.getGroupId() <= 0 
+                    || groupCharge.getMoney() <= 0
+                    || groupCharge.getUserId() <= 0
+                    || groupCharge.getUserList() == null 
+                    || groupCharge.getUserList().isEmpty()) {
+                response.setStatusCode(RespStatus.ERROR_REQUEST);
+                return response;
+            }
+
+            DbService.insertChargeBatch(groupCharge);
+        } catch (Exception e) {
+            AiurLog.logger().error(e.getMessage(), e);
+            response.setStatusCode(RespStatus.ERROR_EXCEPTION);
+            response.setStatusMessage(e.getMessage());
+        }
+
+        return response;
+        
     }
 }
