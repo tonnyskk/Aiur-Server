@@ -134,7 +134,7 @@ public class GroupService {
             VoFinance finance = new VoFinance();
             finance.setUserId(userId);
             finance.setConsumeSummary(DbService.getUserConsumeSummary(userId, groupId));
-            finance.setIncomingSummmary(DbService.getUserIncomingSummary(userId, groupId));
+            finance.setIncomingSummary(DbService.getUserIncomingSummary(userId, groupId));
             response.setData(finance);
         } catch (Exception e) {
             AiurLog.logger().error(e.getMessage(), e);
@@ -174,6 +174,12 @@ public class GroupService {
                     || groupCharge.getUserList().isEmpty()) {
                 response.setStatusCode(RespStatus.ERROR_REQUEST);
                 return response;
+            }
+            
+            if (groupCharge.isPayByGroupOwner()) {
+                groupCharge.setStatus("OK");
+            } else {
+                groupCharge.setStatus("PENDING");
             }
 
             DbService.insertChargeBatch(groupCharge);

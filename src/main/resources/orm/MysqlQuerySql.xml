@@ -32,6 +32,7 @@
 	</resultMap>
 
 	<resultMap id="GpUserAcitivityResult" class="GpActivityItem">
+		<result property="activityId" column="activity_id" javaType="long" />
 		<result property="createTime" column="create_time" javaType="long" />
 		<result property="description" column="user_desc" />
 		<result property="status" column="status" />
@@ -49,7 +50,7 @@
 
 	<resultMap id="GpUserMoneyResult" class="FinanceItem">
 		<result property="userId" column="user_id" javaType="long" />
-		<result property="incomingSummmary" column="incoming_money" javaType="double" />
+		<result property="incomingSummary" column="incoming_money" javaType="double" />
 		<result property="consumeSummary" column="consume_money" javaType="double" />
 	</resultMap>
 	
@@ -146,7 +147,8 @@
 
 	<select id="queryGroupActivity" parameterClass="java.util.Map" resultMap="GpUserAcitivityResult">
 		<![CDATA[
-		   SELECT I01.create_time,
+		   SELECT FLOOR(I01.create_time * RAND() * 1000) AS activity_id,
+		          I01.create_time,
 		          I01.type,
 		          I01.user_desc,
 		          I01.status,
@@ -163,6 +165,7 @@
 					 WHERE rel.user_id = usr.user_id
 					   AND rel.status IN ('PENDING', 'JOINED', 'LEFT')
 					   AND rel.group_id = #group_id:DECIMAL#
+					   AND rel.user_id = #user_id:DECIMAL#
 					UNION
 					SELECT 'CONSUME' AS type,
 						   gc.description AS user_desc,
@@ -187,6 +190,7 @@
 					 WHERE usr.user_id = ui.user_id
 					   AND ui.status in ('PENDING', 'OK')
 					   AND ui.group_id = #group_id:DECIMAL#
+					   AND ui.user_id = #user_id:DECIMAL#
 				  ) I01
 			ORDER BY I01.create_time DESC
 		]]>
@@ -324,7 +328,7 @@
 			  FROM (SELECT user_id,
 			               IFNULL(SUM(money), 0) AS incoming_money
 			          FROM aiur_user_incomming
-			         WHERE group_id = 100
+			         WHERE group_id = #value#
 			           AND status = 'OK'
 			         GROUP BY user_id
 			       ) I01 LEFT OUTER JOIN 
@@ -354,7 +358,7 @@
 				#groupId:DECIMAL#,
 				#description:VARCHAR#,
 				#money:DECIMAL#,
-				'PENDING',
+				#status:VARCHAR#,
 				now(),
 				now()
 			)
@@ -376,7 +380,6 @@
 				#consume_id:DECIMAL#,
 				#user_id:VARCHAR#,
 				#money:DECIMAL#,
-				'PENDING',
 				now(),
 				now()
 			)

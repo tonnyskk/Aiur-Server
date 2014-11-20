@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class VoFinance {
     private double consumeSummary;
-    private double incomingSummmary;
+    private double incomingSummary;
     private long userId;
 
     public long getUserId() {
@@ -20,10 +20,11 @@ public class VoFinance {
     public void setConsumeSummary(double consumeSummary) {
         this.consumeSummary = consumeSummary;
     }
-    public double getIncomingSummmary() {
-        return incomingSummmary;
+    public double getIncomingSummary() {
+        return incomingSummary;
     }
-    public void setIncomingSummmary(double incomingSummmary) {
-        this.incomingSummmary = incomingSummmary;
+    public void setIncomingSummary(double incomingSummary) {
+        this.incomingSummary = incomingSummary;
     }
+    
 }

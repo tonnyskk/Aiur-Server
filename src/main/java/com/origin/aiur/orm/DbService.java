@@ -267,7 +267,7 @@ public class DbService {
                 for (VoUser user : groupList) {
                     for (VoFinance userMoney : userMoneyList) {
                         if (userMoney.getUserId() == user.getUserID()) {
-                            user.setPrepayMoney(userMoney.getIncomingSummmary());
+                            user.setPrepayMoney(userMoney.getIncomingSummary());
                             user.setConsumeMoney(userMoney.getConsumeSummary());
                             break;
                         }
@@ -301,7 +301,7 @@ public class DbService {
                 param.put(PARAM_CONSUME_ID, consumeId);
                 param.put(PARAM_MONEY, averageCost);
 
-                if (userId.longValue() == groupCharge.getUserId() && groupCharge.isPrepaied()) {
+                if (userId.longValue() == groupCharge.getUserId() && groupCharge.isUserPrePay()) {
                     param.put(PARAM_MONEY, averageCost - groupCharge.getMoney());
                 } else {
                     param.put(PARAM_MONEY, averageCost);

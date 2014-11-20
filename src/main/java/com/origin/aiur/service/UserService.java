@@ -121,7 +121,7 @@ public class UserService {
             VoFinance finance = new VoFinance();
             finance.setUserId(userId);
             finance.setConsumeSummary(DbService.getUserConsumeSummary(userId));
-            finance.setIncomingSummmary(DbService.getUserIncomingSummary(userId));
+            finance.setIncomingSummary(DbService.getUserIncomingSummary(userId));
             response.setData(finance);
         } catch (Exception e) {
             AiurLog.logger().error(e.getMessage(), e);
