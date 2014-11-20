@@ -268,7 +268,7 @@ public class DbService {
                     for (VoFinance userMoney : userMoneyList) {
                         if (userMoney.getUserId() == user.getUserID()) {
                             user.setPrepayMoney(userMoney.getIncomingSummmary());
-                            user.setCosumeMoney(userMoney.getConsumeSummary());
+                            user.setConsumeMoney(userMoney.getConsumeSummary());
                             break;
                         }
                     }

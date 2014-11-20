@@ -15,7 +15,7 @@ public class VoUser {
     private List<VoGroup> userGroupList;
     private long createTime;
     private double prepayMoney;
-    private double cosumeMoney;
+    private double consumeMoney;
 
     public VoUser() {
 
@@ -93,12 +93,12 @@ public class VoUser {
         this.prepayMoney = prepayMoney;
     }
 
-    public double getCosumeMoney() {
-        return cosumeMoney;
+    public double getConsumeMoney() {
+        return consumeMoney;
     }
 
-    public void setCosumeMoney(double cosumeMoney) {
-        this.cosumeMoney = cosumeMoney;
+    public void setConsumeMoney(double consumeMoney) {
+        this.consumeMoney = consumeMoney;
     }
 
     @Override
