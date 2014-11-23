@@ -11,6 +11,7 @@ import com.origin.aiur.pojo.GroupCharge;
 import com.origin.aiur.pojo.VoFinance;
 import com.origin.aiur.pojo.VoGroup;
 import com.origin.aiur.pojo.VoGroupActivity;
+import com.origin.aiur.pojo.VoRequestEvent;
 import com.origin.aiur.pojo.VoUser;
 
 public class DbService {
@@ -25,6 +26,7 @@ public class DbService {
     private static final String PARAM_OWNER_ID = "owner_id";
     private static final String PARAM_CONSUME_ID = "consume_id";
     private static final String PARAM_MONEY = "money";
+    private static final String PARAM_INCOMING_ID = "incoming_id";
 
     public static VoUser checkUserAccount(String loginName, String pwd) throws Exception {
         VoUser userInfo = null;
@@ -294,7 +296,6 @@ public class DbService {
 
             client.startTransaction();
             client.startBatch();
-
             for (Long userId : userList) {
                 Map<String, Object> param = new HashMap<String, Object>();
                 param.put(PARAM_USER_ID, userId);
@@ -322,4 +323,80 @@ public class DbService {
         }
     }
 
+    public static void insertGroupUserPrepay(GroupCharge groupCharge) throws Exception {
+
+        try {
+            DbOrm.getORMClient().insert("insertGroupUserPrepay", groupCharge);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<VoRequestEvent> getGroupUserRequestList(long groupId) throws Exception {
+        List<VoRequestEvent> groupList = null;
+        try {
+            groupList = (List<VoRequestEvent>) DbOrm.getORMClient().queryForList("queryGroupUserRequestList", groupId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return groupList;
+    }
+
+    public static void updateConsumeStatus(long comsumeId, String status) throws Exception {
+
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put(PARAM_STATUS, status);
+            param.put(PARAM_CONSUME_ID, comsumeId);
+            DbOrm.getORMClient().update("updateConsumeStatus", param);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static void updateIncomingStatus(long incomingId, String status) throws Exception {
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put(PARAM_STATUS, status);
+            param.put(PARAM_INCOMING_ID, incomingId);
+            DbOrm.getORMClient().update("updateIncomingStatus", param);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static void updateGroupUserJoinStatus(long userId, long groupId, String status) throws Exception {
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put(PARAM_STATUS, status);
+            param.put(PARAM_USER_ID, userId);
+            param.put(PARAM_GROUP_ID, groupId);
+            DbOrm.getORMClient().update("updateUserJoinStatus", param);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    
 }

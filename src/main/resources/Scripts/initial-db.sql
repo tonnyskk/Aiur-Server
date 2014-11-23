@@ -66,6 +66,7 @@ DROP TABLE IF EXISTS `aiur_group_consume`;
 CREATE TABLE `aiur_group_consume`(
   `consume_id` INT(16) NOT NULL AUTO_INCREMENT,
   `group_id` DECIMAL(16, 0) DEFAULT NULL,
+  `request_user_id` DECIMAL(16, 0) DEFAULT NULL,
   `description` VARCHAR(128) COLLATE utf8_bin DEFAULT NULL,
   `money` DECIMAL(16, 2) DEFAULT 0,
   `status` ENUM('PENDING', 'OK', 'INVALID') DEFAULT 'PENDING',

@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class VoUser {
     private long userID;
-    private long groupId;
     private String loginName;
     private String nickName;
     private String password;
@@ -16,6 +15,9 @@ public class VoUser {
     private long createTime;
     private double prepayMoney;
     private double consumeMoney;
+    
+    private long groupId;
+    private String joinStatus;
 
     public VoUser() {
 
@@ -99,6 +101,14 @@ public class VoUser {
 
     public void setConsumeMoney(double consumeMoney) {
         this.consumeMoney = consumeMoney;
+    }
+
+    public String getJoinStatus() {
+        return joinStatus;
+    }
+
+    public void setJoinStatus(String joinStatus) {
+        this.joinStatus = joinStatus;
     }
 
     @Override

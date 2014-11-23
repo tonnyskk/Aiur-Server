@@ -39,8 +39,8 @@ INSERT INTO aiur_user_incomming(user_id, group_id, money, status, create_time, u
 INSERT INTO aiur_user_incomming(user_id, group_id, money, status, create_time, update_time) VALUES (201, 101, 800.00, 'OK', NOW(), NOW());
 
 TRUNCATE TABLE aiur_group_consume;
-INSERT INTO aiur_group_consume(consume_id,group_id, description, money, status, create_time, update_time) VALUES (100, 100, 'TESTDATA', 1000.00, 'OK', NOW(), NOW());
-INSERT INTO aiur_group_consume(consume_id,group_id, description, money, status, create_time, update_time) VALUES (101, 101, 'TESTDATA', 300.00, 'OK', NOW(), NOW());
+INSERT INTO aiur_group_consume(consume_id, group_id, request_user_id, description, money, status, create_time, update_time) VALUES (100, 100, 200, 'TESTDATA', 1000.00, 'OK', NOW(), NOW());
+INSERT INTO aiur_group_consume(consume_id, group_id, request_user_id, description, money, status, create_time, update_time) VALUES (101, 101, 200, 'TESTDATA', 300.00, 'OK', NOW(), NOW());
 
 TRUNCATE TABLE aiur_user_consume_detail;
 INSERT INTO aiur_user_consume_detail (consume_id, user_id, money, create_time, update_time ) VALUES (100, 200, 10, NOW(), NOW());

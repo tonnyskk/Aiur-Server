@@ -6,6 +6,7 @@
 	<typeAlias alias="GroupItem" type="com.origin.aiur.pojo.VoGroup" />
 	<typeAlias alias="GpActivityItem" type="com.origin.aiur.pojo.VoGroupActivity" />
 	<typeAlias alias="FinanceItem" type="com.origin.aiur.pojo.VoFinance" />
+	<typeAlias alias="RequestItem" type="com.origin.aiur.pojo.VoRequestEvent" />
 
 	<resultMap id="UserResult" class="UserItem">
 		<result property="userID" column="user_id" javaType="long" />
@@ -44,6 +45,7 @@
 	<resultMap id="GroupUserResult" class="UserItem">
 		<result property="userID" column="user_id" javaType="long" />
 		<result property="nickName" column="nick_name" />
+		<result property="joinStatus" column="status" />
 		<result property="groupId" column="group_id" javaType="long" />
 		<result property="createTime" column="update_time" javaType="long" />
 	</resultMap>
@@ -52,6 +54,15 @@
 		<result property="userId" column="user_id" javaType="long" />
 		<result property="incomingSummary" column="incoming_money" javaType="double" />
 		<result property="consumeSummary" column="consume_money" javaType="double" />
+	</resultMap>
+	
+	<resultMap id="GpRequestResult" class="RequestItem">
+		<result property="eventType" column="event_type" />
+		<result property="eventId" column="event_id" javaType="long" />
+		<result property="description" column="description" />
+		<result property="money" column="money" javaType="double" />
+		<result property="eventUser" column="event_user" />
+		<result property="createTime" column="create_time" javaType="long" />
 	</resultMap>
 	
 	<select id="checkUserAccount" parameterClass="java.util.Map"
@@ -142,6 +153,7 @@
 			   AND g.status IN ('PENDING', 'OK')
 			   AND r.user_id  = #value#
 			 ORDER BY g.update_time desc 
+			 LIMIT 50
 		]]>
 	</select>
 
@@ -193,6 +205,7 @@
 					   AND ui.user_id = #user_id:DECIMAL#
 				  ) I01
 			ORDER BY I01.create_time DESC
+			LIMIT 50
 		]]>
 	</select>
 
@@ -311,11 +324,12 @@
 			SELECT usr.user_id,
 			       usr.nick_name,
 			       rel.group_id,
+			       rel.status,
 				   UNIX_TIMESTAMP(rel.update_time) * 1000 as update_time
 			  FROM aiur_users usr,
 			       aiur_rel_user_group rel
 			 WHERE usr.user_id = rel.user_id
-			   AND rel.status = 'JOINED'
+			   AND rel.status IN ('JOINED', 'PENDING')
 			   AND rel.group_id = #value#
 		]]>
 	</select>
@@ -350,6 +364,7 @@
 			INSERT INTO aiur_group_consume(
 				group_id,
 				description,
+				request_user_id,
 				money,
 				status,
 				create_time,
@@ -357,6 +372,7 @@
 			)VALUES(
 				#groupId:DECIMAL#,
 				#description:VARCHAR#,
+				#userId:DECIMAL#,
 				#money:DECIMAL#,
 				#status:VARCHAR#,
 				now(),
@@ -378,11 +394,95 @@
 				update_time
 			)VALUES(
 				#consume_id:DECIMAL#,
-				#user_id:VARCHAR#,
+				#user_id:DECIMAL#,
 				#money:DECIMAL#,
 				now(),
 				now()
 			)
 		]]>
 	</insert>
+	
+	<insert id="insertGroupUserPrepay">
+		<![CDATA[
+			INSERT INTO aiur_user_incomming(
+				user_id,
+				group_id,
+				money,
+				status,
+				create_time,
+				update_time
+			)VALUES(
+				#userId:DECIMAL#,
+				#groupId:DECIMAL#,
+				#money:DECIMAL#,
+				#status:VARCHAR#,
+				now(),
+				now()
+			)
+		]]>
+	</insert>
+	
+	<select id="queryGroupUserRequestList" parameterClass="java.lang.Long" resultMap="GpRequestResult">
+		<![CDATA[
+			SELECT I01.event_type,
+				   I01.event_id,
+				   I01.description,
+				   I01.money,
+				   I01.event_user,
+				   I01.create_time
+			  FROM (SELECT 'CONSUME_EVENT' AS event_type,
+						   agc.consume_id AS event_id,
+						   agc.description,
+						   agc.money,
+						   usr.nick_name AS event_user,
+						   UNIX_TIMESTAMP(agc.create_time) * 1000 as create_time
+					  FROM aiur_group_consume agc,
+					       aiur_users usr
+					 WHERE usr.user_id = agc.request_user_id
+					   AND agc.status = 'PENDING'
+					   AND agc.group_id = #value#
+					UNION
+					SELECT 'INCOME_EVENT' AS event_type,
+						   aui.incoming_id AS event_id,
+					       '' AS description,
+					       aui.money,
+						   usr.nick_name AS event_user,
+						   UNIX_TIMESTAMP(aui.create_time) * 1000 as create_time
+					  FROM aiur_user_incomming aui,
+					       aiur_users usr
+					 WHERE aui.user_id = usr.user_id
+					   AND aui.status = 'PENDING'
+					   AND aui.group_id = #value#
+				   ) I01
+			 ORDER BY I01.create_time DESC
+			 LIMIT 50
+		]]>
+	</select>
+	
+	<update id="updateConsumeStatus" parameterClass="java.util.Map">
+		<![CDATA[
+			UPDATE aiur_group_consume
+			   SET status = #status:VARCHAR#
+			 WHERE consume_id = #consume_id:DECIMAL#
+		]]>
+	</update>
+
+	<update id="updateIncomingStatus" parameterClass="java.util.Map">
+		<![CDATA[
+			UPDATE aiur_user_incomming
+			   SET status = #status:VARCHAR#
+			 WHERE incoming_id = #incoming_id:DECIMAL#
+		]]>
+	</update>
+
+	<update id="updateUserJoinStatus" parameterClass="java.util.Map">
+		<![CDATA[
+			UPDATE aiur_rel_user_group
+			   SET status = #status:VARCHAR#
+			 WHERE user_id = #user_id:DECIMAL#
+			   AND group_id = #group_id:DECIMAL#
+		]]>
+	</update>
+	
+	
 </sqlMap>
