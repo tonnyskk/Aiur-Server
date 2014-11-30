@@ -12,6 +12,7 @@
 		<result property="userID" column="user_id" javaType="long" />
 		<result property="loginName" column="login_name" />
 		<result property="nickName" column="nick_name" />
+		<result property="avatarUrl" column="avatar_url"/>
 		<result property="userGroupList" column="ref_id" select="queryUserGroupList" />
 	</resultMap>
 
@@ -30,6 +31,7 @@
 		<result property="groupConsume" column="money" javaType="double" />
 		<result property="status" column="status" />
 		<result property="createTime" column="create_time" javaType="long" />
+		<result property="activeUserList" column="consume_id" select="queryGroupConsumeUserList" />
 	</resultMap>
 
 	<resultMap id="GpUserAcitivityResult" class="GpActivityItem">
@@ -39,12 +41,14 @@
 		<result property="status" column="status" />
 		<result property="type" column="type" />
 		<result property="groupConsume" column="gp_consume" javaType="double" />
-		<result property="userConsume" column="personal_consume" javaType="double" />
+		<result property="userConsume" column="personal_consume"
+			javaType="double" />
 	</resultMap>
 
 	<resultMap id="GroupUserResult" class="UserItem">
 		<result property="userID" column="user_id" javaType="long" />
 		<result property="nickName" column="nick_name" />
+		<result property="avatarUrl" column="avatar_url"/>
 		<result property="joinStatus" column="status" />
 		<result property="groupId" column="group_id" javaType="long" />
 		<result property="createTime" column="update_time" javaType="long" />
@@ -52,10 +56,12 @@
 
 	<resultMap id="GpUserMoneyResult" class="FinanceItem">
 		<result property="userId" column="user_id" javaType="long" />
-		<result property="incomingSummary" column="incoming_money" javaType="double" />
-		<result property="consumeSummary" column="consume_money" javaType="double" />
+		<result property="incomingSummary" column="incoming_money"
+			javaType="double" />
+		<result property="consumeSummary" column="consume_money"
+			javaType="double" />
 	</resultMap>
-	
+
 	<resultMap id="GpRequestResult" class="RequestItem">
 		<result property="eventType" column="event_type" />
 		<result property="eventId" column="event_id" javaType="long" />
@@ -64,13 +70,18 @@
 		<result property="eventUser" column="event_user" />
 		<result property="createTime" column="create_time" javaType="long" />
 	</resultMap>
-	
-	<select id="checkUserAccount" parameterClass="java.util.Map"
-		resultMap="UserResult">
+
+	<resultMap id="GpConsumeUser" class="UserItem">
+		<result property="avatarUrl" column="avatar_url" />
+		<result property="nickName" column="nick_name" />
+	</resultMap>
+
+	<select id="checkUserAccount" parameterClass="java.util.Map" resultMap="UserResult">
 		<![CDATA[
 			SELECT user_id,
 				   login_name,
 				   nick_name,
+				   avatar_url,
 				   user_id as ref_id
 			  FROM aiur_users
 			 WHERE login_name = #login_name:VARCHAR#
@@ -125,7 +136,8 @@
 	</insert>
 
 
-	<select id="queryUserAccount" parameterClass="java.lang.Long" resultMap="UserResult">
+	<select id="queryUserAccount" parameterClass="java.lang.Long"
+		resultMap="UserResult">
 		<![CDATA[
 			SELECT user_id,
 				   login_name,
@@ -136,7 +148,8 @@
 		]]>
 	</select>
 
-	<select id="queryUserActivity" parameterClass="java.lang.Long" resultMap="GpAcitivityResult">
+	<select id="queryUserActivity" parameterClass="java.lang.Long"
+		resultMap="GpAcitivityResult">
 		<![CDATA[
 			SELECT g.consume_id,
 				   g.group_id,
@@ -157,7 +170,20 @@
 		]]>
 	</select>
 
-	<select id="queryGroupActivity" parameterClass="java.util.Map" resultMap="GpUserAcitivityResult">
+	<select id="queryGroupConsumeUserList" parameterClass="long"
+		resultMap="GpConsumeUser">
+		<![CDATA[
+			SELECT usr.nick_name,
+				   usr.avatar_url
+			  FROM aiur_user_consume_detail ucd,
+			       aiur_users usr
+			 WHERE ucd.user_id = usr.user_id
+			   AND ucd.consume_id  = #value#
+		]]>
+	</select>
+
+	<select id="queryGroupActivity" parameterClass="java.util.Map"
+		resultMap="GpUserAcitivityResult">
 		<![CDATA[
 		   SELECT FLOOR(I01.create_time * RAND() * 1000) AS activity_id,
 		          I01.create_time,
@@ -209,7 +235,8 @@
 		]]>
 	</select>
 
-	<select id="queryUserConsumeSummary" parameterClass="java.util.Map" resultClass="java.lang.Double">
+	<select id="queryUserConsumeSummary" parameterClass="java.util.Map"
+		resultClass="java.lang.Double">
 		<![CDATA[
 			SELECT IFNULL(sum(c.money), 0) as total_consume
 			  FROM aiur_user_consume_detail c,
@@ -227,7 +254,8 @@
 		</dynamic>
 	</select>
 
-	<select id="queryUserIncomingSummary" parameterClass="java.util.Map" resultClass="java.lang.Double">
+	<select id="queryUserIncomingSummary" parameterClass="java.util.Map"
+		resultClass="java.lang.Double">
 		<![CDATA[
 			SELECT IFNULL(sum(money), 0) as total_consume
 			  FROM aiur_user_incomming
@@ -282,7 +310,8 @@
 		]]>
 	</insert>
 
-	<select id="searchGroupList" parameterClass="java.util.Map" resultMap="GroupResult">
+	<select id="searchGroupList" parameterClass="java.util.Map"
+		resultMap="GroupResult">
 		<![CDATA[
 			SELECT g.group_id,
 				   CONCAT(g.group_name, '/', u.nick_name) AS group_name,
@@ -301,7 +330,8 @@
 		]]>
 	</select>
 
-	<select id="checkUserGroupExists" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+	<select id="checkUserGroupExists" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
 		<![CDATA[
 			SELECT COUNT(1)
 			  FROM aiur_groups
@@ -310,7 +340,8 @@
 		]]>
 	</select>
 
-	<select id="getUserGroup" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+	<select id="getUserGroup" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
 		<![CDATA[
 			SELECT count(1)
 			  FROM aiur_rel_user_group
@@ -318,11 +349,13 @@
 			   AND group_id = #group_id:DECIMAL#
 		]]>
 	</select>
-	
-	<select id="queryGroupUserList" parameterClass="java.lang.Long" resultMap="GroupUserResult">
+
+	<select id="queryGroupUserList" parameterClass="java.lang.Long"
+		resultMap="GroupUserResult">
 		<![CDATA[
 			SELECT usr.user_id,
 			       usr.nick_name,
+			       usr.avatar_url,
 			       rel.group_id,
 			       rel.status,
 				   UNIX_TIMESTAMP(rel.update_time) * 1000 as update_time
@@ -334,7 +367,8 @@
 		]]>
 	</select>
 
-	<select id="queryGroupUserMoney" parameterClass="java.lang.Long" resultMap="GpUserMoneyResult">
+	<select id="queryGroupUserMoney" parameterClass="java.lang.Long"
+		resultMap="GpUserMoneyResult">
 		<![CDATA[
 			SELECT I01.user_id,
 			       I01.incoming_money,
@@ -357,8 +391,8 @@
 			ON I01.user_id = I02.user_id
 		]]>
 	</select>
-	
-	
+
+
 	<insert id="insertGroupConsume">
 		<![CDATA[
 			INSERT INTO aiur_group_consume(
@@ -401,7 +435,7 @@
 			)
 		]]>
 	</insert>
-	
+
 	<insert id="insertGroupUserPrepay">
 		<![CDATA[
 			INSERT INTO aiur_user_incomming(
@@ -421,8 +455,9 @@
 			)
 		]]>
 	</insert>
-	
-	<select id="queryGroupUserRequestList" parameterClass="java.lang.Long" resultMap="GpRequestResult">
+
+	<select id="queryGroupUserRequestList" parameterClass="java.lang.Long"
+		resultMap="GpRequestResult">
 		<![CDATA[
 			SELECT I01.event_type,
 				   I01.event_id,
@@ -458,7 +493,7 @@
 			 LIMIT 50
 		]]>
 	</select>
-	
+
 	<update id="updateConsumeStatus" parameterClass="java.util.Map">
 		<![CDATA[
 			UPDATE aiur_group_consume
@@ -483,6 +518,6 @@
 			   AND group_id = #group_id:DECIMAL#
 		]]>
 	</update>
-	
-	
+
+
 </sqlMap>

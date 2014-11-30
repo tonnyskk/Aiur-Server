@@ -11,11 +11,13 @@ public class VoUser {
     private String nickName;
     private String password;
     private String deviceId;
+    private String avatarUrl;
     private List<VoGroup> userGroupList;
     private long createTime;
+
     private double prepayMoney;
     private double consumeMoney;
-    
+
     private long groupId;
     private String joinStatus;
 
@@ -70,7 +72,7 @@ public class VoUser {
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
-    
+
     public long getGroupId() {
         return groupId;
     }
@@ -109,6 +111,14 @@ public class VoUser {
 
     public void setJoinStatus(String joinStatus) {
         this.joinStatus = joinStatus;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     @Override

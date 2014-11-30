@@ -11,6 +11,9 @@ INSERT INTO aiur_users(user_id, login_name, nick_name, password, create_time, up
 TRUNCATE TABLE aiur_groups;
 INSERT INTO aiur_groups(group_id, group_name, group_desc, owner_id, create_time, update_time) VALUES (100, 'AIUR', 'First group in test', 200, NOW(), NOW());
 INSERT INTO aiur_groups(group_id, group_name, group_desc, owner_id, create_time, update_time) VALUES (101, 'ACRD', 'Second group in test', 201, NOW(), NOW());
+INSERT INTO aiur_groups(group_id, group_name, group_desc, owner_id, create_time, update_time) VALUES (105, 'TOMY', 'Second group in test', 202, NOW(), NOW());
+INSERT INTO aiur_groups(group_id, group_name, group_desc, owner_id, create_time, update_time) VALUES (103, 'CURY', 'Second group in test', 203, NOW(), NOW());
+INSERT INTO aiur_groups(group_id, group_name, group_desc, owner_id, create_time, update_time) VALUES (104, 'SAMD', 'Second group in test', 204, NOW(), NOW());
 
 TRUNCATE TABLE aiur_rel_user_group;
 INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (200, 100,'JOINED', NOW(), NOW());
@@ -24,6 +27,18 @@ INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_t
 
 INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (200, 101,'JOINED', NOW(), NOW());
 INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (201, 101,'JOINED', NOW(), NOW());
+
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (202, 105,'JOINED', NOW(), NOW());
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (204, 105,'JOINED', NOW(), NOW());
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (205, 105,'JOINED', NOW(), NOW());
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (206, 105,'JOINED', NOW(), NOW());
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (207, 105,'JOINED', NOW(), NOW());
+
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (203, 103,'JOINED', NOW(), NOW());
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (204, 103,'JOINED', NOW(), NOW());
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (204, 104,'JOINED', NOW(), NOW());
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (206, 104,'JOINED', NOW(), NOW());
+INSERT INTO aiur_rel_user_group(user_id, group_id, status, create_time, update_time) VALUES (207, 104,'JOINED', NOW(), NOW());
 
 TRUNCATE TABLE aiur_user_incomming;
 INSERT INTO aiur_user_incomming(user_id, group_id, money, status, create_time, update_time) VALUES (200, 100, 300.00, 'OK', NOW(), NOW());

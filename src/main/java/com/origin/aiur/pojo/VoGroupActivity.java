@@ -1,5 +1,7 @@
 package com.origin.aiur.pojo;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -13,6 +15,8 @@ public class VoGroupActivity {
     private String type;
     private double groupConsume;
     private double userConsume;
+
+    private List<VoUser> activeUserList;
 
     public long getActivityId() {
         return activityId;
@@ -85,4 +89,13 @@ public class VoGroupActivity {
     public void setUserConsume(double userConsume) {
         this.userConsume = userConsume;
     }
+
+    public List<VoUser> getActiveUserList() {
+        return activeUserList;
+    }
+
+    public void setActiveUserList(List<VoUser> activeUserList) {
+        this.activeUserList = activeUserList;
+    }
+
 }

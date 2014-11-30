@@ -14,6 +14,7 @@ CREATE TABLE `aiur_users`(
   `login_name` VARCHAR(64) COLLATE utf8_bin DEFAULT NULL,
   `nick_name` VARCHAR(64) COLLATE utf8_bin DEFAULT NULL,
   `password` VARCHAR(64) COLLATE utf8_bin DEFAULT NULL,
+  `avatar_url` VARCHAR(128) COLLATE utf8_bin DEFAULT NULL,
   `create_time` DATETIME DEFAULT NULL,
   `update_time` DATETIME DEFAULT NULL,
    PRIMARY KEY (`user_id`),
