@@ -142,6 +142,7 @@
 			SELECT user_id,
 				   login_name,
 				   nick_name,
+				   avatar_url,
 				   user_id as ref_id
 			  FROM aiur_users
 			 WHERE user_id = #value#

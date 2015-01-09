@@ -18,7 +18,6 @@
 	
 	<logger name="ActionLogger" additivity="false">
 		<level value="debug" />
-		<appender-ref ref="ActionFile" />
 		<appender-ref ref="STDOUT" />
 	</logger>
 	

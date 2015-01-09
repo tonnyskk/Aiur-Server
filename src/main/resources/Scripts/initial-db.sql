@@ -8,6 +8,7 @@ GRANT ALL ON `aiurdb`.* TO `airuadmin`@`%`;
 GRANT ALL ON `aiurdb`.* TO `airuadmin`@`localhost`;
 
 -- create table
+USE aiurdb;
 DROP TABLE IF EXISTS `aiur_users`;
 CREATE TABLE `aiur_users`(
   `user_id` INT(16) NOT NULL AUTO_INCREMENT,
