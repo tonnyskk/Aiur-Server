@@ -12,7 +12,7 @@
 		<result property="userID" column="user_id" javaType="long" />
 		<result property="loginName" column="login_name" />
 		<result property="nickName" column="nick_name" />
-		<result property="avatarUrl" column="avatar_url"/>
+		<result property="avatarData" column="avatar_data"/>
 		<result property="userGroupList" column="ref_id" select="queryUserGroupList" />
 	</resultMap>
 
@@ -48,7 +48,7 @@
 	<resultMap id="GroupUserResult" class="UserItem">
 		<result property="userID" column="user_id" javaType="long" />
 		<result property="nickName" column="nick_name" />
-		<result property="avatarUrl" column="avatar_url"/>
+		<result property="avatarData" column="avatar_data"/>
 		<result property="joinStatus" column="status" />
 		<result property="groupId" column="group_id" javaType="long" />
 		<result property="createTime" column="update_time" javaType="long" />
@@ -72,7 +72,7 @@
 	</resultMap>
 
 	<resultMap id="GpConsumeUser" class="UserItem">
-		<result property="avatarUrl" column="avatar_url" />
+		<result property="avatarData" column="avatar_data" />
 		<result property="nickName" column="nick_name" />
 	</resultMap>
 
@@ -81,7 +81,7 @@
 			SELECT user_id,
 				   login_name,
 				   nick_name,
-				   avatar_url,
+				   avatar_data,
 				   user_id as ref_id
 			  FROM aiur_users
 			 WHERE login_name = #login_name:VARCHAR#
@@ -142,7 +142,7 @@
 			SELECT user_id,
 				   login_name,
 				   nick_name,
-				   avatar_url,
+				   avatar_data,
 				   user_id as ref_id
 			  FROM aiur_users
 			 WHERE user_id = #value#
@@ -175,7 +175,7 @@
 		resultMap="GpConsumeUser">
 		<![CDATA[
 			SELECT usr.nick_name,
-				   usr.avatar_url
+				   usr.avatar_data
 			  FROM aiur_user_consume_detail ucd,
 			       aiur_users usr
 			 WHERE ucd.user_id = usr.user_id
@@ -356,7 +356,7 @@
 		<![CDATA[
 			SELECT usr.user_id,
 			       usr.nick_name,
-			       usr.avatar_url,
+			       usr.avatar_data,
 			       rel.group_id,
 			       rel.status,
 				   UNIX_TIMESTAMP(rel.update_time) * 1000 as update_time
@@ -520,5 +520,19 @@
 		]]>
 	</update>
 
+	<update id="updateUserPassword" parameterClass="java.util.Map">
+		<![CDATA[
+			UPDATE aiur_users
+			   SET password = #pwd_val:VARCHAR#
+			 WHERE user_id = #user_id:DECIMAL#
+		]]>
+	</update>
 
+	<update id="updateUserAvatar" parameterClass="java.util.Map">
+		<![CDATA[
+			UPDATE aiur_users
+			   SET avatar_data = #avatar_data:TEXT#
+			 WHERE user_id = #user_id:DECIMAL#
+		]]>
+	</update>
 </sqlMap>

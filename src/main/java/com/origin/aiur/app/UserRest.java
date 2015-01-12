@@ -146,4 +146,36 @@ public class UserRest {
         AiurLog.logger().info("Finance summary for user > " + userId);
         return UserService.queryFinance(userId);
     }
+
+    /**
+     * Update user password
+     * URL: /aiur/rest/user/pwd
+     * 
+     * @param voUser
+     * @return
+     */
+    @POST
+    @Path("pwd")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public VoResponse changePwd(@Context HttpServletRequest request, VoUser voUser) {
+        AiurLog.logger().info("Receieving quest for changePwd > " + voUser);
+        return UserService.changePwd(voUser);
+    }
+
+    /**
+     * Update user password
+     * URL: /aiur/rest/user/avatar
+     * 
+     * @param voUser
+     * @return
+     */
+    @POST
+    @Path("avatar")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public VoResponse updateAvatar(@Context HttpServletRequest request, VoUser voUser) {
+        AiurLog.logger().info("Receieving quest for updateAvatar > " + voUser);
+        return UserService.updateAvatar(voUser);
+    }
 }

@@ -17,6 +17,7 @@ import com.origin.aiur.pojo.VoUser;
 public class DbService {
     private static final String PARAM_LOGIN_NAME = "login_name";
     private static final String PARAM_PASSWORD = "pwd_val";
+    private static final String PARAM_AVATAR = "avatar_data";
     private static final String PARAM_NICK_NAME = "nick_name";
     private static final String PARAM_GROUP_ID = "group_id";
     private static final String PARAM_USER_ID = "user_id";
@@ -91,6 +92,37 @@ public class DbService {
         }
         return userInfo;
     }
+    
+    public static void updateUserPassword(long userId, String password)  throws Exception {
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put(PARAM_USER_ID, userId);
+            param.put(PARAM_PASSWORD, password);
+            DbOrm.getORMClient().update("updateUserPassword", param);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    public static void updateUserAvatar(long userId, String avatar)  throws Exception {
+        try {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put(PARAM_USER_ID, userId);
+            param.put(PARAM_AVATAR, avatar);
+            DbOrm.getORMClient().update("updateUserAvatar", param);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
 
     @SuppressWarnings("unchecked")
     public static List<VoGroup> getUserGroupList(long userID) throws Exception {

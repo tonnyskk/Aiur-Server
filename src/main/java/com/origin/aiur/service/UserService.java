@@ -132,4 +132,42 @@ public class UserService {
         return response;
     }
 
+    public static VoResponse changePwd(VoUser voUser) {
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
+
+        try {
+            VoUser user = DbService.checkUserAccount(voUser.getLoginName(), AiurUtils.getDbPassword(voUser.getPassword()));
+            if (user == null) {
+                response.setStatusCode(RespStatus.INVALID_CHANGE_PWD_WRONG);
+            } else {
+                DbService.updateUserPassword(user.getUserID(), voUser.getPasswordNew());
+            }
+        } catch (Exception e) {
+            AiurLog.logger().error(e.getMessage(), e);
+
+            response.setStatusCode(RespStatus.ERROR_EXCEPTION);
+            response.setStatusMessage(e.getMessage());
+        }
+
+        return response;
+    }
+
+    public static VoResponse updateAvatar(VoUser voUser) {
+        VoResponse response = new VoResponse();
+        response.setStatusCode(RespStatus.OK);
+
+        try {
+            DbService.updateUserAvatar(voUser.getUserID(), voUser.getAvatarData());
+            VoUser user = DbService.getUserAccount(voUser.getUserID());
+            response.setData(user);
+        } catch (Exception e) {
+            AiurLog.logger().error(e.getMessage(), e);
+
+            response.setStatusCode(RespStatus.ERROR_EXCEPTION);
+            response.setStatusMessage(e.getMessage());
+        }
+
+        return response;
+    }
 }
